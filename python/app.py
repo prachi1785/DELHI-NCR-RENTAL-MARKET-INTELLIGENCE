@@ -116,8 +116,8 @@ if page in ["Overview", "Price Drivers"]:
     
     selected_locality = st.sidebar.selectbox("Locality", ["All"] + filtered_localities)
     
-    bhk_types = ["All"] + sorted(list(df_raw['bhk_type'].unique()))
-    selected_bhk = st.sidebar.selectbox("BHK Type", bhk_types)
+    property_types = ["All"] + sorted(list(df_raw['property_type'].unique()))
+    selected_bhk = st.sidebar.selectbox("BHK Type", property_types)
     
     furnishing = ["All"] + sorted(list(df_raw['furnishing_status'].unique()))
     selected_furnishing = st.sidebar.selectbox("Furnishing Status", furnishing)
@@ -132,7 +132,7 @@ if page in ["Overview", "Price Drivers"]:
     if selected_locality != "All":
         df_filtered = df_filtered[df_filtered['locality'] == selected_locality]
     if selected_bhk != "All":
-        df_filtered = df_filtered[df_filtered['bhk_type'] == selected_bhk]
+        df_filtered = df_filtered[df_filtered['property_type'] == selected_bhk]
     if selected_furnishing != "All":
         df_filtered = df_filtered[df_filtered['furnishing_status'] == selected_furnishing]
     df_filtered = df_filtered[df_filtered['monthly_rent'] <= selected_budget]
@@ -217,7 +217,7 @@ if page == "Overview":
     
     with sub_cols[0]:
         st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569;'>BHK Type Distribution</h4>", unsafe_allow_html=True)
-        bhk_counts = df_filtered['bhk_type'].value_counts().reset_index()
+        bhk_counts = df_filtered['property_type'].value_counts().reset_index()
         bhk_counts.columns = ['BHK Type', 'Count']
         fig_bhk = px.pie(bhk_counts, values='Count', names='BHK Type', color_discrete_sequence=['#0f172a', '#334155', '#475569', '#64748b', '#cbd5e1'])
         fig_bhk.update_layout(margin=dict(l=10, r=10, t=10, b=10), height=220, font_size=10)
@@ -288,8 +288,8 @@ elif page == "PriceDrivers":
             df_filtered, 
             x='area_sqft', 
             y='monthly_rent',
-            color='bhk_type',
-            labels={'area_sqft': 'Carpet Area (sqft)', 'monthly_rent': 'Monthly Rent (₹)', 'bhk_type': 'Layout'},
+            color='property_type',
+            labels={'area_sqft': 'Carpet Area (sqft)', 'monthly_rent': 'Monthly Rent (₹)', 'property_type': 'Layout'},
             color_discrete_sequence=['#0f172a', '#334155', '#475569', '#94a3b8'],
             opacity=0.6,
             hover_data=['locality', 'city', 'furnishing_status']
@@ -610,7 +610,7 @@ elif page == "FindYourRental":
                 c1, c2 = st.columns(2)
                 with c1:
                     st.write(f"**Locality:** {row['locality']}, {row['city']}")
-                    st.write(f"**BHK Layout:** {row['bhk_type']} ({int(row['area_sqft'])} sqft)")
+                    st.write(f"**BHK Layout:** {row['property_type']} ({int(row['area_sqft'])} sqft)")
                     st.write(f"**Proximity:** Metro: {row['metro_distance_km']} km | Offices: {row['office_distance_km']} km")
                     st.write(f"**Amenities:** AC: {row['ac']} | Parking: {row['parking']} | WiFi: {row['wifi']}")
                 with c2:
