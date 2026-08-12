@@ -279,7 +279,7 @@ if page == "Overview":
         st.plotly_chart(fig_city, use_container_width=True)
 
 # ----------------- PRICE DRIVERS PAGE -----------------
-elif page == "PriceDrivers":
+elif page == "Price Drivers":
     if df_filtered.empty:
         st.warning("No listings match your filters. Try adjusting budget sliders.")
         st.stop()
@@ -418,7 +418,7 @@ elif page == "PriceDrivers":
                 """, unsafe_allow_html=True)
 
 # ----------------- RENTER SEGMENTS PAGE -----------------
-elif page == "RenterSegments":
+elif page == "Renter Segments":
     st.markdown("<p style='font-size: 12px; color: #475569; margin-bottom: 1.5rem;'>Contrasting space requirements, budget parameters, and transit connectivity weights across renter demographics.</p>", unsafe_allow_html=True)
     
     # Construct weights dataframe for comparison
@@ -494,7 +494,7 @@ elif page == "RenterSegments":
         st.plotly_chart(fig_radar, use_container_width=True)
 
 # ----------------- FIND YOUR RENTAL PAGE -----------------
-elif page == "FindYourRental":
+elif page == "Find Your Rental":
     st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569; border-b: 1px solid #e2e8f0; padding-bottom: 0.5rem;'>Your Requirements</h4>", unsafe_allow_html=True)
     
     setup_cols = st.columns(4)
@@ -590,7 +590,7 @@ elif page == "FindYourRental":
                     st.write(f"**Total Estimated Housing Cost:** **₹{int(total):,}/month**")
 
 # ----------------- LOCALITY COMPARISON PAGE -----------------
-elif page == "LocalityComparison":
+elif page == "Locality Comparison":
     st.markdown("<p style='font-size: 12px; color: #475569; margin-bottom: 1.5rem;'>Select up to three localities to compare rents, connectivity parameters, and Value Scores side-by-side.</p>", unsafe_allow_html=True)
     
     localities = sorted(list(df_raw['locality'].unique()))
