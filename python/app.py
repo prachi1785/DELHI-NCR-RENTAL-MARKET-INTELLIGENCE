@@ -578,8 +578,8 @@ elif page == "Find Your Rental":
                     st.write(f"**Amenities:** AC: {row['ac']} | Parking: {row['parking']} | WiFi: {row['wifi']}")
                 with c2:
                     rent = row['monthly_rent']
-                    maint = row['maintenance_charge']
-                    elec = row['electricity_charge_estimate']
+                    maint = row['maintenance']
+                    elec = row['electricity_estimate']
                     total = rent + maint + elec + 800  # flat internet
                     
                     st.write(f"**Base monthly rent:** ₹{int(rent):,}")
