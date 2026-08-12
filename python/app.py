@@ -15,11 +15,15 @@ st.set_page_config(
 # Custom Slate UI CSS Overrides
 st.markdown("""
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
     /* Consolidate typography and backgrounds across environments */
-    html, body, [class*="css"], .stApp, .stMarkdown, .kpi-container {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    html, body, [class*="css"], .stApp, .stMarkdown, .kpi-container, .stSelectbox, .stNumberInput, .stRadio, .stSlider {
+        font-family: 'Manrope', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
     }
-    .stApp { background-color: #f8fafc !important; }
+    .stApp { 
+        background-color: #f8fafc !important; 
+    }
     
     /* Parity for top padding and page spacing */
     .block-container { 
@@ -28,36 +32,98 @@ st.markdown("""
         max-width: 100% !important; 
     }
     
-    h1, h2, h3, h4 { 
+    h1, h2, h3, h4, h5, h6 { 
+        font-family: 'Manrope', sans-serif !important;
         color: #0f172a !important; 
         font-weight: 700 !important; 
+        letter-spacing: -0.02em !important;
+    }
+
+    /* Sidebar controls and navigation tweaks */
+    section[data-testid="stSidebar"] {
+        background-color: #ffffff !important;
+        border-right: 1px solid #e2e8f0 !important;
     }
     
-    /* KPI Card styling to match localhost exactly */
+    /* KPI Card styling to match React dashboard visual hierarchy */
     .kpi-container {
-        background: white;
+        background: #ffffff;
         border: 1px solid #e2e8f0;
-        border-radius: 4px;
-        padding: 1rem;
-        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        border-radius: 8px;
+        padding: 1.1rem 1rem;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+        font-family: 'Manrope', sans-serif;
     }
     .kpi-title {
         font-size: 10px;
-        font-weight: bold;
+        font-weight: 600;
         color: #64748b;
         text-transform: uppercase;
         letter-spacing: 0.05em;
     }
     .kpi-value {
-        font-size: 20px;
-        font-weight: bold;
-        color: #0f172a;
+        font-size: 26px;
+        font-weight: 700;
+        color: #1e3a8a; /* Indigo primary accent */
         margin-top: 0.25rem;
+        line-height: 1.1;
     }
     .kpi-subtext {
         font-size: 10px;
-        color: #94a3b8;
-        margin-top: 0.1rem;
+        color: #64748b;
+        margin-top: 0.2rem;
+    }
+
+    /* Property Suggestion cards styling */
+    .property-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 1.25rem;
+        margin-bottom: 0.5rem;
+        margin-top: 1rem;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+        font-family: 'Manrope', sans-serif;
+    }
+    .property-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+    .property-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: #0f172a;
+    }
+    .property-rent {
+        font-size: 16px;
+        font-weight: 700;
+        color: #2563eb;
+    }
+    .property-meta {
+        font-size: 12px;
+        color: #475569;
+        margin-bottom: 0.75rem;
+    }
+    .property-badge {
+        background-color: #f1f5f9;
+        color: #334155;
+        font-size: 10px;
+        font-weight: 600;
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+        margin-right: 0.25rem;
+        display: inline-block;
+    }
+    .property-score-badge {
+        background-color: #eff6ff;
+        color: #1e40af;
+        border: 1px solid #bfdbfe;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 0.25rem 0.6rem;
+        border-radius: 6px;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -90,6 +156,26 @@ try:
 except Exception as e:
     st.error(f"Error loading dataset: {e}")
     st.stop()
+
+# Helper: Style Plotly figures to use Manrope typography and clean backgrounds
+def style_plotly_fig(fig, height=300):
+    fig.update_layout(
+        font_family="Manrope, Inter, -apple-system, sans-serif",
+        font_color="#334155",
+        title_font_family="Manrope, sans-serif",
+        title_font_color="#0f172a",
+        title_font_size=12,
+        legend_title_font_family="Manrope, sans-serif",
+        legend_font_family="Manrope, sans-serif",
+        legend_font_size=9,
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        margin=dict(l=0, r=0, t=35, b=0),
+        height=height
+    )
+    fig.update_xaxes(showgrid=False, linecolor='#e2e8f0', gridcolor='#f1f5f9', tickfont=dict(family="Manrope, sans-serif", size=9))
+    fig.update_yaxes(showgrid=True, linecolor='#e2e8f0', gridcolor='#f1f5f9', tickfont=dict(family="Manrope, sans-serif", size=9))
+    return fig
 
 # Segment Preference Configurations
 WEIGHTS = {
@@ -167,8 +253,8 @@ with st.sidebar.expander("System Diagnostic Check", expanded=False):
     """, unsafe_allow_html=True)
 
 # Header title helper
-st.markdown(f"<h1 style='font-size: 24px; margin-bottom: 0.2rem;'>{page}</h1>", unsafe_allow_html=True)
-st.markdown("<p style='font-size: 12px; color: #64748b; margin-bottom: 1.5rem;'>Delhi/NCR Rental Market Intelligence Internal BI Case Study</p>", unsafe_allow_html=True)
+st.markdown(f"<h1 style='font-size: 32px; font-weight: 700; color: #0f172a; margin-bottom: 0.15rem; font-family: Manrope, sans-serif;'>{page}</h1>", unsafe_allow_html=True)
+st.markdown("<p style='font-size: 13px; font-weight: 500; color: #64748b; margin-bottom: 1.75rem; font-family: Manrope, sans-serif; letter-spacing: 0.02em;'>Delhi/NCR Rental Market Intelligence &middot; Internal BI Case Study</p>", unsafe_allow_html=True)
 
 # ----------------- OVERVIEW PAGE -----------------
 if page == "Overview":
@@ -208,16 +294,9 @@ if page == "Overview":
             x='monthly_rent', 
             orientation='h',
             labels={'locality': 'Locality', 'monthly_rent': 'Median Monthly Rent (₹)'},
-            color_discrete_sequence=['#1e293b']
+            color_discrete_sequence=['#1e3a8a']
         )
-        fig_loc.update_layout(
-            margin=dict(l=0, r=0, t=10, b=0),
-            height=300,
-            plot_bgcolor='white',
-            paper_bgcolor='white',
-            font_size=10,
-            xaxis=dict(showgrid=True, gridcolor='#f1f5f9')
-        )
+        fig_loc = style_plotly_fig(fig_loc, height=300)
         st.plotly_chart(fig_loc, use_container_width=True)
         
     with chart_cols[1]:
@@ -227,16 +306,9 @@ if page == "Overview":
             x='monthly_rent',
             nbins=12,
             labels={'monthly_rent': 'Monthly Rent (₹)', 'count': 'Listings'},
-            color_discrete_sequence=['#475569']
+            color_discrete_sequence=['#3b82f6']
         )
-        fig_dist.update_layout(
-            margin=dict(l=0, r=0, t=10, b=0),
-            height=300,
-            plot_bgcolor='white',
-            paper_bgcolor='white',
-            font_size=10,
-            yaxis=dict(showgrid=True, gridcolor='#f1f5f9')
-        )
+        fig_dist = style_plotly_fig(fig_dist, height=300)
         st.plotly_chart(fig_dist, use_container_width=True)
         
     st.markdown("<br>", unsafe_allow_html=True)
@@ -246,16 +318,16 @@ if page == "Overview":
         st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569;'>BHK Type Distribution</h4>", unsafe_allow_html=True)
         bhk_counts = df_filtered['property_type'].value_counts().reset_index()
         bhk_counts.columns = ['BHK Type', 'Count']
-        fig_bhk = px.pie(bhk_counts, values='Count', names='BHK Type', color_discrete_sequence=['#0f172a', '#334155', '#475569', '#64748b', '#cbd5e1'])
-        fig_bhk.update_layout(margin=dict(l=10, r=10, t=10, b=10), height=220, font_size=10)
+        fig_bhk = px.pie(bhk_counts, values='Count', names='BHK Type', color_discrete_sequence=['#1e3a8a', '#2563eb', '#3b82f6', '#64748b', '#cbd5e1'])
+        fig_bhk = style_plotly_fig(fig_bhk, height=220)
         st.plotly_chart(fig_bhk, use_container_width=True)
         
     with sub_cols[1]:
         st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569;'>Furnishing Status</h4>", unsafe_allow_html=True)
         furn_counts = df_filtered['furnishing_status'].value_counts().reset_index()
         furn_counts.columns = ['Status', 'Count']
-        fig_furn = px.pie(furn_counts, values='Count', names='Status', color_discrete_sequence=['#334155', '#64748b', '#cbd5e1'])
-        fig_furn.update_layout(margin=dict(l=10, r=10, t=10, b=10), height=220, font_size=10)
+        fig_furn = px.pie(furn_counts, values='Count', names='Status', color_discrete_sequence=['#1e3a8a', '#3b82f6', '#cbd5e1'])
+        fig_furn = style_plotly_fig(fig_furn, height=220)
         st.plotly_chart(fig_furn, use_container_width=True)
         
     with sub_cols[2]:
@@ -266,16 +338,9 @@ if page == "Overview":
             x='city', 
             y='monthly_rent', 
             labels={'city': 'City', 'monthly_rent': 'Rent (₹)'},
-            color_discrete_sequence=['#475569']
+            color_discrete_sequence=['#1e3a8a']
         )
-        fig_city.update_layout(
-            margin=dict(l=0, r=0, t=10, b=0),
-            height=220,
-            plot_bgcolor='white',
-            paper_bgcolor='white',
-            font_size=10,
-            yaxis=dict(showgrid=True, gridcolor='#f1f5f9')
-        )
+        fig_city = style_plotly_fig(fig_city, height=220)
         st.plotly_chart(fig_city, use_container_width=True)
 
 # ----------------- PRICE DRIVERS PAGE -----------------
@@ -317,19 +382,11 @@ elif page == "Price Drivers":
             y='monthly_rent',
             color='property_type',
             labels={'area_sqft': 'Carpet Area (sqft)', 'monthly_rent': 'Monthly Rent (₹)', 'property_type': 'Layout'},
-            color_discrete_sequence=['#0f172a', '#334155', '#475569', '#94a3b8'],
+            color_discrete_sequence=['#1e3a8a', '#2563eb', '#3b82f6', '#94a3b8'],
             opacity=0.6,
             hover_data=['locality', 'city', 'furnishing_status']
         )
-        fig_scatter.update_layout(
-            margin=dict(l=0, r=0, t=10, b=0),
-            height=320,
-            plot_bgcolor='white',
-            paper_bgcolor='white',
-            font_size=10,
-            xaxis=dict(showgrid=True, gridcolor='#f1f5f9'),
-            yaxis=dict(showgrid=True, gridcolor='#f1f5f9')
-        )
+        fig_scatter = style_plotly_fig(fig_scatter, height=320)
         st.plotly_chart(fig_scatter, use_container_width=True)
         
         # Sub charts row
@@ -352,16 +409,9 @@ elif page == "Price Drivers":
                 x='metro_bucket',
                 y='monthly_rent',
                 labels={'metro_bucket': 'Metro Distance', 'monthly_rent': 'Median Rent (₹)'},
-                color_discrete_sequence=['#475569']
+                color_discrete_sequence=['#1e3a8a']
             )
-            fig_metro.update_layout(
-                margin=dict(l=0, r=0, t=10, b=0),
-                height=240,
-                plot_bgcolor='white',
-                paper_bgcolor='white',
-                font_size=10,
-                yaxis=dict(showgrid=True, gridcolor='#f1f5f9')
-            )
+            fig_metro = style_plotly_fig(fig_metro, height=240)
             st.plotly_chart(fig_metro, use_container_width=True)
             
         with sub_chart_cols[1]:
@@ -377,16 +427,9 @@ elif page == "Price Drivers":
                 y='Amenity',
                 x='Premium (%)',
                 orientation='h',
-                color_discrete_sequence=['#334155']
+                color_discrete_sequence=['#3b82f6']
             )
-            fig_prem.update_layout(
-                margin=dict(l=0, r=0, t=10, b=0),
-                height=240,
-                plot_bgcolor='white',
-                paper_bgcolor='white',
-                font_size=10,
-                xaxis=dict(showgrid=True, gridcolor='#f1f5f9')
-            )
+            fig_prem = style_plotly_fig(fig_prem, height=240)
             st.plotly_chart(fig_prem, use_container_width=True)
             
     with chart_cols[1]:
@@ -481,18 +524,10 @@ elif page == "Renter Segments":
             y='Weight (%)',
             color='Renter Segment',
             barmode='group',
-            color_discrete_sequence=['#0f172a', '#334155', '#475569', '#94a3b8']
+            color_discrete_sequence=['#1e3a8a', '#2563eb', '#3b82f6', '#94a3b8']
         )
-        fig_radar.update_layout(
-            margin=dict(l=0, r=0, t=10, b=0),
-            height=280,
-            plot_bgcolor='white',
-            paper_bgcolor='white',
-            font_size=10,
-            yaxis=dict(showgrid=True, gridcolor='#f1f5f9')
-        )
+        fig_radar = style_plotly_fig(fig_radar, height=280)
         st.plotly_chart(fig_radar, use_container_width=True)
-
 # ----------------- FIND YOUR RENTAL PAGE -----------------
 elif page == "Find Your Rental":
     st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569; border-b: 1px solid #e2e8f0; padding-bottom: 0.5rem;'>Your Requirements</h4>", unsafe_allow_html=True)
@@ -558,18 +593,37 @@ elif page == "Find Your Rental":
     if df_matches.empty:
         st.info("No properties match all current requirements. Try loosening filters (e.g. increase max budget or untick AC/parking).")
     else:
-        # Display top 10 matches in a clean table format
-        show_cols = ['listing_title', 'locality', 'city', 'monthly_rent', 'area_sqft', 'metro_distance_km', 'furnishing_status', 'VFM_Score']
-        df_show = df_matches[show_cols].head(10).copy()
-        df_show.columns = ['Property Details', 'Locality', 'City', 'Rent (₹)', 'Size (sqft)', 'Metro (km)', 'Furnishing', 'VFM Score']
-        
-        # Render a clean HTML table
-        st.dataframe(df_show, use_container_width=True, hide_index=True)
-        
-        # Expanders for detailed breakdown
-        st.markdown("<span style='font-size: 10px; font-weight: bold; text-transform: uppercase; color: #94a3b8;'>Housing Cost Breakdowns</span>", unsafe_allow_html=True)
+        # Render cards for top 3 matches and expanders below them
         for idx, row in df_matches.head(3).iterrows():
-            with st.expander(f"{row['listing_title']} - {row['locality']} (Score: {row['VFM_Score']}/100)"):
+            # Format amenities
+            amenity_badges = ""
+            for col, label in [('ac', 'AC'), ('parking', 'Parking'), ('wifi', 'WiFi'), ('power_backup', 'Power Backup')]:
+                if row[col] == 'Yes':
+                    amenity_badges += f"<span class='property-badge'>{label}</span>"
+            
+            # Render property card
+            st.markdown(f"""
+            <div class='property-card'>
+                <div class='property-header'>
+                    <div class='property-title'>{row['listing_title']}</div>
+                    <div class='property-score-badge'>{row['VFM_Score']} / 100 Value Score</div>
+                </div>
+                <div class='property-meta'>
+                    <strong>{row['locality']}, {row['city']}</strong> &bull; 
+                    {row['property_type']} &bull; 
+                    {int(row['area_sqft'])} sq.ft. &bull; 
+                    {row['metro_distance_km']:.2f} km from metro
+                </div>
+                <div style='display: flex; justify-content: space-between; align-items: center;'>
+                    <div>
+                        {amenity_badges}
+                    </div>
+                    <div class='property-rent'>₹{int(row['monthly_rent']):,}/month</div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            with st.expander(f"Detailed Monthly Budget Breakdown &bull; {row['listing_title']}"):
                 c1, c2 = st.columns(2)
                 with c1:
                     st.write(f"**Locality:** {row['locality']}, {row['city']}")
@@ -639,16 +693,9 @@ elif page == "Locality Comparison":
             x='Locality',
             y='Median Rent (₹)',
             color='Locality',
-            color_discrete_sequence=['#1e293b', '#475569', '#94a3b8']
+            color_discrete_sequence=['#1e3a8a', '#3b82f6', '#94a3b8']
         )
-        fig_comp.update_layout(
-            margin=dict(l=0, r=0, t=10, b=0),
-            height=280,
-            plot_bgcolor='white',
-            paper_bgcolor='white',
-            font_size=10,
-            yaxis=dict(showgrid=True, gridcolor='#f1f5f9')
-        )
+        fig_comp = style_plotly_fig(fig_comp, height=280)
         st.plotly_chart(fig_comp, use_container_width=True)
 
 # ----------------- METHODOLOGY PAGE -----------------
