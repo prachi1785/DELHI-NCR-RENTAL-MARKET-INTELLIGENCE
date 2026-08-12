@@ -15,9 +15,25 @@ st.set_page_config(
 # Custom Slate UI CSS Overrides
 st.markdown("""
 <style>
-    .reportview-container { background: #f8fafc; }
-    .main .block-container { padding-top: 2rem; padding-bottom: 2rem; }
-    h1, h2, h3, h4 { color: #0f172a; font-weight: 700; }
+    /* Consolidate typography and backgrounds across environments */
+    html, body, [class*="css"], .stApp, .stMarkdown, .kpi-container {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    }
+    .stApp { background-color: #f8fafc !important; }
+    
+    /* Parity for top padding and page spacing */
+    .block-container { 
+        padding-top: 1.5rem !important; 
+        padding-bottom: 2.0rem !important; 
+        max-width: 100% !important; 
+    }
+    
+    h1, h2, h3, h4 { 
+        color: #0f172a !important; 
+        font-weight: 700 !important; 
+    }
+    
+    /* KPI Card styling to match localhost exactly */
     .kpi-container {
         background: white;
         border: 1px solid #e2e8f0;
