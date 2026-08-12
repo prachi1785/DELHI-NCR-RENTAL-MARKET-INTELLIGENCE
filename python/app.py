@@ -7,8 +7,9 @@ import os
 # Page Configurations
 st.set_page_config(
     page_title="Delhi/NCR Rental Market Intelligence",
-    page_icon="📊",
-    layout="wide"
+    page_icon="🏠",
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
 # Custom Slate UI CSS Overrides
@@ -138,6 +139,16 @@ if page in ["Overview", "Price Drivers"]:
     df_filtered = df_filtered[df_filtered['monthly_rent'] <= selected_budget]
 else:
     df_filtered = df_raw.copy()
+# System Status Diagnostics (Collapsed)
+with st.sidebar.expander("System Diagnostic Check", expanded=False):
+    st.markdown(f"""
+    <div style='font-size: 10px; color: #64748b; line-height: 1.4;'>
+        <strong>Streamlit:</strong> {st.__version__}<br>
+        <strong>WD:</strong> {os.getcwd()[:20]}...<br>
+        <strong>Config:</strong> {'Found' if os.path.exists('.streamlit/config.toml') else 'Missing'}<br>
+        <strong>Clean CSV:</strong> {'Found' if os.path.exists('data/processed/rental_listings_cleaned.csv') else 'Missing'}
+    </div>
+    """, unsafe_allow_html=True)
 
 # Header title helper
 st.markdown(f"<h1 style='font-size: 24px; margin-bottom: 0.2rem;'>{page}</h1>", unsafe_allow_html=True)
