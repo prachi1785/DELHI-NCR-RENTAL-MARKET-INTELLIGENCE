@@ -43,7 +43,7 @@ st.markdown("""
         margin-top: 0.1rem;
     }
 </style>
-""", unsafe_allow_code_html=True)
+""", unsafe_allow_html=True)
 
 # Helper: Load dataset
 @st.cache_data
@@ -83,7 +83,7 @@ WEIGHTS = {
 }
 
 # Navigation Menu
-st.sidebar.markdown("<h2 style='font-size: 14px; margin-bottom: 1rem; color: white;'>Navigation Controls</h2>", unsafe_allow_code_html=True)
+st.sidebar.markdown("<h2 style='font-size: 14px; margin-bottom: 1rem; color: white;'>Navigation Controls</h2>", unsafe_allow_html=True)
 page = st.sidebar.radio(
     "Select Tab View",
     ["Overview", "Price Drivers", "Renter Segments", "Find Your Rental", "Locality Comparison", "Methodology"],
@@ -99,12 +99,12 @@ st.sidebar.markdown(f"""
     <strong>Last Updated:</strong> Aug 2026<br>
     <strong>Data Status:</strong> Simulated Prototype
 </div>
-""", unsafe_allow_code_html=True)
+""", unsafe_allow_html=True)
 
 # Global Filters only active for Overview and Price Drivers
 if page in ["Overview", "Price Drivers"]:
     st.sidebar.markdown("---")
-    st.sidebar.markdown("<span style='font-size: 10px; font-weight: bold; text-transform: uppercase; color: #94a3b8;'>Data Scope Filters</span>", unsafe_allow_code_html=True)
+    st.sidebar.markdown("<span style='font-size: 10px; font-weight: bold; text-transform: uppercase; color: #94a3b8;'>Data Scope Filters</span>", unsafe_allow_html=True)
     
     cities = ["All"] + sorted(list(df_raw['city'].unique()))
     selected_city = st.sidebar.selectbox("City", cities)
@@ -140,8 +140,8 @@ else:
     df_filtered = df_raw.copy()
 
 # Header title helper
-st.markdown(f"<h1 style='font-size: 24px; margin-bottom: 0.2rem;'>{page}</h1>", unsafe_allow_code_html=True)
-st.markdown("<p style='font-size: 12px; color: #64748b; margin-bottom: 1.5rem;'>Delhi/NCR Rental Market Intelligence Internal BI Case Study</p>", unsafe_allow_code_html=True)
+st.markdown(f"<h1 style='font-size: 24px; margin-bottom: 0.2rem;'>{page}</h1>", unsafe_allow_html=True)
+st.markdown("<p style='font-size: 12px; color: #64748b; margin-bottom: 1.5rem;'>Delhi/NCR Rental Market Intelligence Internal BI Case Study</p>", unsafe_allow_html=True)
 
 # ----------------- OVERVIEW PAGE -----------------
 if page == "Overview":
@@ -158,22 +158,22 @@ if page == "Overview":
     
     cols = st.columns(5)
     with cols[0]:
-        st.markdown(f"""<div class='kpi-container'><div class='kpi-title'>Total Listings</div><div class='kpi-value'>{len(df_filtered)}</div><div class='kpi-subtext'>Active records</div></div>""", unsafe_allow_code_html=True)
+        st.markdown(f"""<div class='kpi-container'><div class='kpi-title'>Total Listings</div><div class='kpi-value'>{len(df_filtered)}</div><div class='kpi-subtext'>Active records</div></div>""", unsafe_allow_html=True)
     with cols[1]:
-        st.markdown(f"""<div class='kpi-container'><div class='kpi-title'>Median Rent</div><div class='kpi-value'>₹{int(median_rent):,}</div><div class='kpi-subtext'>Avg: ₹{int(avg_rent):,}</div></div>""", unsafe_allow_code_html=True)
+        st.markdown(f"""<div class='kpi-container'><div class='kpi-title'>Median Rent</div><div class='kpi-value'>₹{int(median_rent):,}</div><div class='kpi-subtext'>Avg: ₹{int(avg_rent):,}</div></div>""", unsafe_allow_html=True)
     with cols[2]:
-        st.markdown(f"""<div class='kpi-container'><div class='kpi-title'>Median Rent / Sq.Ft</div><div class='kpi-value'>₹{int(median_sqft)}</div><div class='kpi-subtext'>Carpet area basis</div></div>""", unsafe_allow_code_html=True)
+        st.markdown(f"""<div class='kpi-container'><div class='kpi-title'>Median Rent / Sq.Ft</div><div class='kpi-value'>₹{int(median_sqft)}</div><div class='kpi-subtext'>Carpet area basis</div></div>""", unsafe_allow_html=True)
     with cols[3]:
-        st.markdown(f"""<div class='kpi-container'><div class='kpi-title'>Average Size</div><div class='kpi-value'>{int(avg_size)} sqft</div><div class='kpi-subtext'>Floor space average</div></div>""", unsafe_allow_code_html=True)
+        st.markdown(f"""<div class='kpi-container'><div class='kpi-title'>Average Size</div><div class='kpi-value'>{int(avg_size)} sqft</div><div class='kpi-subtext'>Floor space average</div></div>""", unsafe_allow_html=True)
     with cols[4]:
-        st.markdown(f"""<div class='kpi-container'><div class='kpi-title'>Median Deposit</div><div class='kpi-value'>₹{int(median_deposit):,}</div><div class='kpi-subtext'>~{(median_deposit/median_rent):.1f}x Rent</div></div>""", unsafe_allow_code_html=True)
+        st.markdown(f"""<div class='kpi-container'><div class='kpi-title'>Median Deposit</div><div class='kpi-value'>₹{int(median_deposit):,}</div><div class='kpi-subtext'>~{(median_deposit/median_rent):.1f}x Rent</div></div>""", unsafe_allow_html=True)
         
-    st.markdown("<br>", unsafe_allow_code_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
     
     chart_cols = st.columns(2)
     
     with chart_cols[0]:
-        st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569;'>Top 10 Localities by Rent (Median)</h4>", unsafe_allow_code_html=True)
+        st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569;'>Top 10 Localities by Rent (Median)</h4>", unsafe_allow_html=True)
         locality_rents = df_filtered.groupby('locality')['monthly_rent'].median().reset_index().sort_values(by='monthly_rent', ascending=True).tail(10)
         fig_loc = px.bar(
             locality_rents, 
@@ -194,7 +194,7 @@ if page == "Overview":
         st.plotly_chart(fig_loc, use_container_width=True)
         
     with chart_cols[1]:
-        st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569;'>Rent Distribution Bins</h4>", unsafe_allow_code_html=True)
+        st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569;'>Rent Distribution Bins</h4>", unsafe_allow_html=True)
         fig_dist = px.histogram(
             df_filtered, 
             x='monthly_rent',
@@ -212,11 +212,11 @@ if page == "Overview":
         )
         st.plotly_chart(fig_dist, use_container_width=True)
         
-    st.markdown("<br>", unsafe_allow_code_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
     sub_cols = st.columns(3)
     
     with sub_cols[0]:
-        st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569;'>BHK Type Distribution</h4>", unsafe_allow_code_html=True)
+        st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569;'>BHK Type Distribution</h4>", unsafe_allow_html=True)
         bhk_counts = df_filtered['bhk_type'].value_counts().reset_index()
         bhk_counts.columns = ['BHK Type', 'Count']
         fig_bhk = px.pie(bhk_counts, values='Count', names='BHK Type', color_discrete_sequence=['#0f172a', '#334155', '#475569', '#64748b', '#cbd5e1'])
@@ -224,7 +224,7 @@ if page == "Overview":
         st.plotly_chart(fig_bhk, use_container_width=True)
         
     with sub_cols[1]:
-        st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569;'>Furnishing Status</h4>", unsafe_allow_code_html=True)
+        st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569;'>Furnishing Status</h4>", unsafe_allow_html=True)
         furn_counts = df_filtered['furnishing_status'].value_counts().reset_index()
         furn_counts.columns = ['Status', 'Count']
         fig_furn = px.pie(furn_counts, values='Count', names='Status', color_discrete_sequence=['#334155', '#64748b', '#cbd5e1'])
@@ -232,7 +232,7 @@ if page == "Overview":
         st.plotly_chart(fig_furn, use_container_width=True)
         
     with sub_cols[2]:
-        st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569;'>Median Rent by City</h4>", unsafe_allow_code_html=True)
+        st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569;'>Median Rent by City</h4>", unsafe_allow_html=True)
         city_median = df_filtered.groupby('city')['monthly_rent'].median().reset_index().sort_values(by='monthly_rent', ascending=False)
         fig_city = px.bar(
             city_median, 
@@ -283,7 +283,7 @@ elif page == "PriceDrivers":
     chart_cols = st.columns([3, 1])
     
     with chart_cols[0]:
-        st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569;'>Rent vs. Property Size (Carpet Area)</h4>", unsafe_allow_code_html=True)
+        st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569;'>Rent vs. Property Size (Carpet Area)</h4>", unsafe_allow_html=True)
         fig_scatter = px.scatter(
             df_filtered, 
             x='area_sqft', 
@@ -308,7 +308,7 @@ elif page == "PriceDrivers":
         # Sub charts row
         sub_chart_cols = st.columns(2)
         with sub_chart_cols[0]:
-            st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569;'>Rent by Metro Proximity (Median)</h4>", unsafe_allow_code_html=True)
+            st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569;'>Rent by Metro Proximity (Median)</h4>", unsafe_allow_html=True)
             
             # Bucket metro distance
             df_metro = df_filtered.copy()
@@ -338,7 +338,7 @@ elif page == "PriceDrivers":
             st.plotly_chart(fig_metro, use_container_width=True)
             
         with sub_chart_cols[1]:
-            st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569;'>Amenity Rental Premiums (%)</h4>", unsafe_allow_code_html=True)
+            st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569;'>Amenity Rental Premiums (%)</h4>", unsafe_allow_html=True)
             premiums = pd.DataFrame({
                 'Amenity': ['Parking', 'Air Cond.', 'Power Backup', 'WiFi'],
                 'Premium (%)': [parking_prem, ac_prem, backup_prem, wifi_prem]
@@ -363,7 +363,7 @@ elif page == "PriceDrivers":
             st.plotly_chart(fig_prem, use_container_width=True)
             
     with chart_cols[1]:
-        st.markdown("<h4 style='font-size: 10px; font-weight: bold; text-transform: uppercase; color: #64748b; border-b: 1px solid #e2e8f0; padding-bottom: 0.5rem;'>Dynamic Insights</h4>", unsafe_allow_code_html=True)
+        st.markdown("<h4 style='font-size: 10px; font-weight: bold; text-transform: uppercase; color: #64748b; border-b: 1px solid #e2e8f0; padding-bottom: 0.5rem;'>Dynamic Insights</h4>", unsafe_allow_html=True)
         
         # Statically calculate findings from filtered data
         insights = []
@@ -381,18 +381,18 @@ elif page == "PriceDrivers":
                 insights.append(f"**Transit Proximity:** Properties within 500m of the Delhi metro corridor command a **{int(metro_delta)}%** pricing margin over remote options (>2km).")
         
         if not insights:
-            st.markdown("<p style='font-size: 11px; color: #94a3b8;'>Adjust filters to compute dynamic observations.</p>", unsafe_allow_code_html=True)
+            st.markdown("<p style='font-size: 11px; color: #94a3b8;'>Adjust filters to compute dynamic observations.</p>", unsafe_allow_html=True)
         else:
             for inst in insights:
                 st.markdown(f"""
                 <div style='background: white; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0.75rem; margin-bottom: 0.75rem; font-size: 11px; line-height: 1.5;'>
                     {inst}
                 </div>
-                """, unsafe_allow_code_html=True)
+                """, unsafe_allow_html=True)
 
 # ----------------- RENTER SEGMENTS PAGE -----------------
 elif page == "RenterSegments":
-    st.markdown("<p style='font-size: 12px; color: #475569; margin-bottom: 1.5rem;'>Contrasting space requirements, budget parameters, and transit connectivity weights across renter demographics.</p>", unsafe_allow_code_html=True)
+    st.markdown("<p style='font-size: 12px; color: #475569; margin-bottom: 1.5rem;'>Contrasting space requirements, budget parameters, and transit connectivity weights across renter demographics.</p>", unsafe_allow_html=True)
     
     # Construct weights dataframe for comparison
     subjects = ['Rent Affordability', 'Metro Proximity', 'Target Destination', 'Amenities Score', 'Safety Index', 'Carpet Area']
@@ -438,14 +438,14 @@ elif page == "RenterSegments":
     cols = st.columns([1, 1])
     
     with cols[0]:
-        st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569;'>Value Scoring Weight Matrix (%)</h4>", unsafe_allow_code_html=True)
+        st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569;'>Value Scoring Weight Matrix (%)</h4>", unsafe_allow_html=True)
         # Display as a clean table
         df_radar_show = df_radar.copy()
         df_radar_show.columns = ['Preference Metric', 'Students (%)', 'Working Professionals (%)', 'Working Bachelors (%)', 'Families (%)']
         st.dataframe(df_radar_show, use_container_width=True, hide_index=True)
         
     with cols[1]:
-        st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569;'>Scoring Weight Comparison</h4>", unsafe_allow_code_html=True)
+        st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569;'>Scoring Weight Comparison</h4>", unsafe_allow_html=True)
         # Melt dataframe for bar charting
         df_melted = df_radar.melt(id_vars='subject', var_name='Renter Segment', value_name='Weight (%)')
         fig_radar = px.bar(
@@ -468,7 +468,7 @@ elif page == "RenterSegments":
 
 # ----------------- FIND YOUR RENTAL PAGE -----------------
 elif page == "FindYourRental":
-    st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569; border-b: 1px solid #e2e8f0; padding-bottom: 0.5rem;'>Your Requirements</h4>", unsafe_allow_code_html=True)
+    st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569; border-b: 1px solid #e2e8f0; padding-bottom: 0.5rem;'>Your Requirements</h4>", unsafe_allow_html=True)
     
     setup_cols = st.columns(4)
     with setup_cols[0]:
@@ -480,7 +480,7 @@ elif page == "FindYourRental":
     with setup_cols[3]:
         max_metro = st.selectbox("Max Metro Distance", ["No Limit", "Within 500m", "Within 1km", "Within 2km"])
         
-    st.markdown("<span style='font-size: 10px; font-weight: bold; text-transform: uppercase; color: #94a3b8;'>Key Amenities Needed</span>", unsafe_allow_code_html=True)
+    st.markdown("<span style='font-size: 10px; font-weight: bold; text-transform: uppercase; color: #94a3b8;'>Key Amenities Needed</span>", unsafe_allow_html=True)
     amenity_cols = st.columns(4)
     with amenity_cols[0]:
         need_ac = st.checkbox("Air Conditioning (AC)")
@@ -589,8 +589,8 @@ elif page == "FindYourRental":
         
     df_matches = df_matches.sort_values(by='VFM_Score', ascending=False)
     
-    st.markdown("<br>", unsafe_allow_code_html=True)
-    st.markdown(f"<h4 style='font-size: 13px; text-transform: uppercase; color: #475569;'>Suggested Matches ({len(df_matches)} found)</h4>", unsafe_allow_code_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown(f"<h4 style='font-size: 13px; text-transform: uppercase; color: #475569;'>Suggested Matches ({len(df_matches)} found)</h4>", unsafe_allow_html=True)
     
     if df_matches.empty:
         st.info("No properties match all current requirements. Try loosening filters (e.g. increase max budget or untick AC/parking).")
@@ -604,7 +604,7 @@ elif page == "FindYourRental":
         st.dataframe(df_show, use_container_width=True, hide_index=True)
         
         # Expanders for detailed breakdown
-        st.markdown("<span style='font-size: 10px; font-weight: bold; text-transform: uppercase; color: #94a3b8;'>Housing Cost Breakdowns</span>", unsafe_allow_code_html=True)
+        st.markdown("<span style='font-size: 10px; font-weight: bold; text-transform: uppercase; color: #94a3b8;'>Housing Cost Breakdowns</span>", unsafe_allow_html=True)
         for idx, row in df_matches.head(3).iterrows():
             with st.expander(f"{row['listing_title']} - {row['locality']} (Score: {row['VFM_Score']}/100)"):
                 c1, c2 = st.columns(2)
@@ -628,7 +628,7 @@ elif page == "FindYourRental":
 
 # ----------------- LOCALITY COMPARISON PAGE -----------------
 elif page == "LocalityComparison":
-    st.markdown("<p style='font-size: 12px; color: #475569; margin-bottom: 1.5rem;'>Select up to three localities to compare rents, connectivity parameters, and Value Scores side-by-side.</p>", unsafe_allow_code_html=True)
+    st.markdown("<p style='font-size: 12px; color: #475569; margin-bottom: 1.5rem;'>Select up to three localities to compare rents, connectivity parameters, and Value Scores side-by-side.</p>", unsafe_allow_html=True)
     
     localities = sorted(list(df_raw['locality'].unique()))
     
@@ -663,11 +663,11 @@ elif page == "LocalityComparison":
             
     df_compare = pd.DataFrame(stats)
     
-    st.markdown("<br>", unsafe_allow_code_html=True)
-    st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569;'>Comparison Matrix</h4>", unsafe_allow_code_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569;'>Comparison Matrix</h4>", unsafe_allow_html=True)
     st.dataframe(df_compare, use_container_width=True, hide_index=True)
     
-    st.markdown("<br>", unsafe_allow_code_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
     
     # Chart comparison
     if len(df_compare) > 0:
@@ -712,4 +712,4 @@ elif page == "Methodology":
             <li><strong>Dynamic Seasonality:</strong> Rents vary depending on the calendar month (e.g. North Campus rents surge in July/August during DU admissions). The dataset reflects a standardized snapshot.</li>
         </ul>
     </div>
-    """, unsafe_allow_code_html=True)
+    """, unsafe_allow_html=True)
