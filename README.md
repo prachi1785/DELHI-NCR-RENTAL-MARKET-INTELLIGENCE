@@ -22,11 +22,25 @@ This project avoids generic hard-coded findings. All conclusions, pricing premiu
 
 ---
 
-## 2. Tech Stack
+## 2. Technology Stack & Tooling
 
-- **Python & Jupyter Notebooks:** Pandas (data cleansing, formatting, text mapping), NumPy (mathematical decay functions), Matplotlib & Seaborn (statistical distributions and correlation checks).
-- **Relational SQL Database:** PostgreSQL-compatible schema and analytical query scripts for grouping, premium calculation, and in-database VFM scoring.
-- **Interactive Dashboard:** React (v18), TypeScript, Vite, Tailwind CSS (v4), and Recharts (data visualizations).
+### Core Languages
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
+![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
+![SQL](https://img.shields.io/badge/SQL-00758F?style=for-the-badge&logo=mysql&logoColor=white)
+
+### Data Engineering & Analytics
+![Pandas](https://img.shields.io/badge/pandas-%23150458.svg?style=for-the-badge&logo=pandas&logoColor=white)
+![NumPy](https://img.shields.io/badge/numpy-%23013243.svg?style=for-the-badge&logo=numpy&logoColor=white)
+![Jupyter](https://img.shields.io/badge/Jupyter-F37626.svg?style=for-the-badge&logo=Jupyter&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
+
+### Interactive Dashboard Frontend
+![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+![Vite](https://img.shields.io/badge/vite-%23646CFF.svg?style=for-the-badge&logo=vite&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Recharts](https://img.shields.io/badge/Recharts-22B5BF?style=for-the-badge&logo=chartmogul&logoColor=white)
 
 ---
 
