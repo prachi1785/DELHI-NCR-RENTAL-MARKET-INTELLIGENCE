@@ -518,79 +518,15 @@ elif page == "FindYourRental":
     with amenity_cols[3]:
         need_wifi = st.checkbox("High-Speed WiFi")
         
-    # Calculate Custom Value Scores dynamically based on select profile
-    w = WEIGHTS[renter_type]
+    # Map pre-calculated Value Scores directly from dataset
+    score_col = (
+        'vfm_student' if renter_type == 'Student'
+        else 'vfm_professional' if renter_type == 'Working Professional'
+        else 'vfm_bachelor' if renter_type == 'Working Bachelor'
+        else 'vfm_family'
+    )
     df_calc = df_raw.copy()
-    
-    # 1. Normalise affordability
-    max_rent_glob = df_calc['monthly_rent'].max()
-    df_calc['score_aff'] = 100 * (1 - (df_calc['monthly_rent'] / max_rent_glob))
-    
-    # 2. Normalise metro
-    df_calc['score_metro'] = 100 * np.exp(-0.8 * df_calc['metro_distance_km'])
-    
-    # 3. Normalise safety
-    df_calc['score_safety'] = df_calc['safety_index']
-    
-    # 4. Amenities percent
-    def calc_amenity_score(row):
-        total = 4
-        avail = 0
-        if row['ac'] == 'Yes': avail += 1
-        if row['parking'] == 'Yes': avail += 1
-        if row['power_backup'] == 'Yes': avail += 1
-        if row['wifi'] == 'Yes': avail += 1
-        return (avail / total) * 100
-    df_calc['score_amenities'] = df_calc.apply(calc_amenity_score, axis=1)
-    
-    # Calculate target destination decays
-    df_calc['score_college'] = 100 * np.exp(-0.8 * df_calc['college_distance_km'])
-    df_calc['score_office'] = 100 * np.exp(-0.8 * df_calc['office_distance_km'])
-    
-    # Family specifics
-    df_calc['score_school'] = 100 * np.exp(-0.8 * df_calc['school_distance_km'])
-    df_calc['score_hospital'] = 100 * np.exp(-0.8 * df_calc['hospital_distance_km'])
-    max_size_glob = df_calc['area_sqft'].max()
-    df_calc['score_space'] = (df_calc['area_sqft'] / max_size_glob) * 100
-    
-    # Compute Weighted VFM
-    if renter_type == 'Student':
-        df_calc['VFM_Score'] = (
-            df_calc['score_aff'] * w['rent'] +
-            df_calc['score_metro'] * w['metro'] +
-            df_calc['score_college'] * w['college'] +
-            df_calc['score_amenities'] * w['amenities'] +
-            df_calc['score_safety'] * w['safety']
-        )
-    elif renter_type == 'Working Professional':
-        df_calc['VFM_Score'] = (
-            df_calc['score_aff'] * w['rent'] +
-            df_calc['score_metro'] * w['metro'] +
-            df_calc['score_office'] * w['office'] +
-            df_calc['score_amenities'] * w['amenities'] +
-            df_calc['score_safety'] * w['safety']
-        )
-    elif renter_type == 'Working Bachelor':
-        df_calc['VFM_Score'] = (
-            df_calc['score_aff'] * w['rent'] +
-            df_calc['score_metro'] * w['metro'] +
-            df_calc['score_office'] * w['office'] +
-            df_calc['score_amenities'] * w['amenities'] +
-            df_calc['score_safety'] * w['safety']
-        )
-    elif renter_type == 'Family':
-        # Combined metro/office
-        df_calc['score_mo'] = (df_calc['score_metro'] + df_calc['score_office']) / 2
-        df_calc['VFM_Score'] = (
-            df_calc['score_aff'] * w['rent'] +
-            df_calc['score_space'] * w['space'] +
-            df_calc['score_school'] * w['school'] +
-            df_calc['score_hospital'] * w['hospital'] +
-            df_calc['score_safety'] * w['safety'] +
-            df_calc['score_mo'] * w['metro_office']
-        )
-        
-    df_calc['VFM_Score'] = df_calc['VFM_Score'].round().astype(int)
+    df_calc['VFM_Score'] = df_calc[score_col].round().astype(int)
     
     # Filter final suggestions
     df_matches = df_calc.copy()
@@ -683,7 +619,7 @@ elif page == "LocalityComparison":
                 'Rent/Sq.Ft. (₹)': int(df_l['rent_per_sqft'].median()),
                 'Avg Size (sqft)': int(df_l['area_sqft'].mean()),
                 'Metro (km)': f"{df_l['metro_distance_km'].median():.2f} km",
-                'Safety Index': int(df_l['safety_index'].median()),
+                'Safety Index': int(((df_l['cctv'] == 'Yes').mean() * 100 + (df_l['security'] == 'Yes').mean() * 100) / 2),
                 'Parking Spot (%)': f"{int((df_l['parking'] == 'Yes').mean() * 100)}%",
                 'Backup Power (%)': f"{int((df_l['power_backup'] == 'Yes').mean() * 100)}%"
             })
