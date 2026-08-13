@@ -335,6 +335,10 @@ st.sidebar.markdown(f"""
         <span>Last Updated:</span>
         <span style='color: #ffffff;'>Aug 2026</span>
     </div>
+    <div style='display: flex; justify-content: space-between; margin-bottom: 0.75rem; border-top: 1px dashed #1e293b; padding-top: 0.5rem;'>
+        <span>Build Commit:</span>
+        <span style='color: #a78bfa; font-weight: 600;'>2e4bd72</span>
+    </div>
     <div style='color: #64748b; font-size: 9px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em; border-top: 1px solid #1e293b; padding-top: 0.5rem;'>
         Data Status: Simulated Prototype
     </div>
