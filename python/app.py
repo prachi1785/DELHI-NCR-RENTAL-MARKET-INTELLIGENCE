@@ -73,19 +73,14 @@ if js_file and css_file:
     with open(os.path.join(assets_dir, css_file), 'r', encoding='utf-8') as f:
         css_content = f.read()
 
-    # Inline them by replacing script and link tags
-    # Replace link stylesheet
-    html_content = re.sub(
-        r'<link rel="stylesheet"[^>]*href="/assets/[^"]*"[^>]*>',
-        f'<style>\n{css_content}\n</style>',
-        html_content
-    )
-    # Replace script tag
-    html_content = re.sub(
-        r'<script type="module"[^>]*src="/assets/[^"]*"[^>]*><\/script>',
-        f'<script type="module">\n{js_content}\n</script>',
-        html_content
-    )
+    # Inline them by replacing script and link tags literally to avoid PatternError from backslashes
+    css_match = re.search(r'<link rel="stylesheet"[^>]*href="/assets/[^"]*"[^>]*>', html_content)
+    if css_match:
+        html_content = html_content.replace(css_match.group(0), f'<style>\n{css_content}\n</style>')
+
+    js_match = re.search(r'<script type="module"[^>]*src="/assets/[^"]*"[^>]*><\/script>', html_content)
+    if js_match:
+        html_content = html_content.replace(js_match.group(0), f'<script type="module">\n{js_content}\n</script>')
 else:
     st.error("Vite build assets not found! Check dashboard/dist/assets.")
     st.stop()
