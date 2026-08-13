@@ -29,7 +29,8 @@ st.markdown("""
     .block-container { 
         padding-top: 1.5rem !important; 
         padding-bottom: 2.0rem !important; 
-        max-width: 100% !important; 
+        max-width: 1200px !important; 
+        margin: 0 auto !important;
     }
     
     h1, h2, h3, h4, h5, h6 { 
@@ -43,6 +44,12 @@ st.markdown("""
     section[data-testid="stSidebar"] {
         background-color: #0f172a !important;
         border-right: 1px solid #1e293b !important;
+        width: 270px !important;
+        min-width: 270px !important;
+        max-width: 270px !important;
+    }
+    section[data-testid="stSidebar"] > div {
+        width: 270px !important;
     }
     section[data-testid="stSidebar"] * {
         color: #e2e8f0 !important;
@@ -56,8 +63,8 @@ st.markdown("""
     /* Sidebar radio buttons styling */
     div[role="radiogroup"] label {
         background-color: transparent !important;
-        padding: 0.5rem 0.75rem !important;
-        border-radius: 6px !important;
+        padding: 0.6rem 0.8rem !important;
+        border-radius: 4px !important;
         margin-bottom: 0.25rem !important;
         width: 100% !important;
         cursor: pointer !important;
@@ -66,20 +73,77 @@ st.markdown("""
         background-color: rgba(255, 255, 255, 0.05) !important;
     }
     div[role="radiogroup"] label:has(div[data-checked="true"]) {
-        background-color: #3b82f6 !important; /* Active blue background */
+        background-color: #1e293b !important; /* Active slate-navy background */
     }
     div[role="radiogroup"] label:has(div[data-checked="true"]) p,
     div[role="radiogroup"] label:has(div[data-checked="true"]) div {
         color: #ffffff !important;
-        font-weight: 700 !important;
+        font-weight: 600 !important;
     }
     div[role="radiogroup"] label p, div[role="radiogroup"] label div {
         color: #94a3b8 !important;
         font-size: 13px !important;
         transition: color 0.15s ease !important;
+        margin: 0 !important;
     }
     div[role="radiogroup"] label:hover p, div[role="radiogroup"] label:hover div {
         color: #ffffff !important;
+    }
+    
+    /* Vector Line Icons via SVG background injection */
+    div[role="radiogroup"] label p::before {
+        content: "";
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        margin-right: 10px;
+        vertical-align: -2px;
+        background-repeat: no-repeat;
+        background-size: contain;
+    }
+    /* Inactive States */
+    div[role="radiogroup"] label:nth-child(1) p::before {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%2394a3b8%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z%27/%3E%3Cpolyline points=%279 22 9 12 15 12 15 22%27/%3E%3C/svg%3E");
+    }
+    div[role="radiogroup"] label:nth-child(2) p::before {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%2394a3b8%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpolyline points=%2722 7 13.5 15.5 8.5 10.5 2 17%27/%3E%3Cpolyline points=%2716 7 22 7 22 13%27/%3E%3C/svg%3E");
+    }
+    div[role="radiogroup"] label:nth-child(3) p::before {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%2394a3b8%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpolygon points=%273 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21%27/%3E%3Cline x1=%279%27 x2=%279%27 y1=%273%27 y2=%2718%27/%3E%3Cline x1=%2715%27 x2=%2715%27 y1=%276%27 y2=%2721%27/%3E%3C/svg%3E");
+    }
+    div[role="radiogroup"] label:nth-child(4) p::before {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%2394a3b8%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2%27/%3E%3Ccircle cx=%279%27 cy=%277%27 r=%274%27/%3E%3Cpath d=%27M22 21v-2a4 4 0 0 0-3-3.87%27/%3E%3Cpath d=%27M16 3.13a4 4 0 0 1 0 7.75%27/%3E%3C/svg%3E");
+    }
+    div[role="radiogroup"] label:nth-child(5) p::before {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%2394a3b8%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Ccircle cx=%2711%27 cy=%2711%27 r=%278%27/%3E%3Cline x1=%2721%27 x2=%2716.65%27 y1=%2721%27 y2=%2716.65%27/%3E%3C/svg%3E");
+    }
+    div[role="radiogroup"] label:nth-child(6) p::before {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%2394a3b8%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Crect width=%2718%27 height=%2718%27 x=%273%27 y=%273%27 rx=%272%27/%3E%3Cline x1=%2712%27 x2=%2712%27 y1=%273%27 y2=%2721%27/%3E%3C/svg%3E");
+    }
+    div[role="radiogroup"] label:nth-child(7) p::before {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%2394a3b8%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Ccircle cx=%2712%27 cy=%2712%27 r=%2710%27/%3E%3Cline x1=%2712%27 x2=%2712%27 y1=%2716%27 y2=%2712%27/%3E%3Cline x1=%2712%27 x2=%2712.01%27 y1=%278%27 y2=%278%27/%3E%3C/svg%3E");
+    }
+    /* Active States */
+    div[role="radiogroup"] label:has(div[data-checked="true"]):nth-child(1) p::before {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23ffffff%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z%27/%3E%3Cpolyline points=%279 22 9 12 15 12 15 22%27/%3E%3C/svg%3E");
+    }
+    div[role="radiogroup"] label:has(div[data-checked="true"]):nth-child(2) p::before {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23ffffff%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpolyline points=%2722 7 13.5 15.5 8.5 10.5 2 17%27/%3E%3Cpolyline points=%2716 7 22 7 22 13%27/%3E%3C/svg%3E");
+    }
+    div[role="radiogroup"] label:has(div[data-checked="true"]):nth-child(3) p::before {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23ffffff%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpolygon points=%273 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21%27/%3E%3Cline x1=%279%27 x2=%279%27 y1=%273%27 y2=%2718%27/%3E%3Cline x1=%2715%27 x2=%2715%27 y1=%276%27 y2=%2721%27/%3E%3C/svg%3E");
+    }
+    div[role="radiogroup"] label:has(div[data-checked="true"]):nth-child(4) p::before {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23ffffff%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2%27/%3E%3Ccircle cx=%279%27 cy=%277%27 r=%274%27/%3E%3Cpath d=%27M22 21v-2a4 4 0 0 0-3-3.87%27/%3E%3Cpath d=%27M16 3.13a4 4 0 0 1 0 7.75%27/%3E%3C/svg%3E");
+    }
+    div[role="radiogroup"] label:has(div[data-checked="true"]):nth-child(5) p::before {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23ffffff%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Ccircle cx=%2711%27 cy=%2711%27 r=%278%27/%3E%3Cline x1=%2721%27 x2=%2716.65%27 y1=%2721%27 y2=%2716.65%27/%3E%3C/svg%3E");
+    }
+    div[role="radiogroup"] label:has(div[data-checked="true"]):nth-child(6) p::before {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23ffffff%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Crect width=%2718%27 height=%2718%27 x=%273%27 y=%273%27 rx=%272%27/%3E%3Cline x1=%2712%27 x2=%2712%27 y1=%273%27 y2=%2721%27/%3E%3C/svg%3E");
+    }
+    div[role="radiogroup"] label:has(div[data-checked="true"]):nth-child(7) p::before {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23ffffff%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Ccircle cx=%2712%27 cy=%2712%27 r=%2710%27/%3E%3Cline x1=%2712%27 x2=%2712%27 y1=%2716%27 y2=%2712%27/%3E%3Cline x1=%2712%27 x2=%2712.01%27 y1=%278%27 y2=%278%27/%3E%3C/svg%3E");
     }
     
     /* KPI Card styling to match React dashboard visual hierarchy */
@@ -199,19 +263,16 @@ def style_plotly_fig(fig, height=300):
     fig.update_layout(
         font_family="Manrope, Inter, -apple-system, sans-serif",
         font_color="#334155",
-        title_font_family="Manrope, sans-serif",
-        title_font_color="#0f172a",
-        title_font_size=12,
         legend_title_font_family="Manrope, sans-serif",
         legend_font_family="Manrope, sans-serif",
         legend_font_size=9,
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        margin=dict(l=0, r=0, t=35, b=0),
+        margin=dict(l=0, r=0, t=10, b=0),
         height=height
     )
-    fig.update_xaxes(showgrid=False, linecolor='#e2e8f0', gridcolor='#f1f5f9', tickfont=dict(family="Manrope, sans-serif", size=9))
-    fig.update_yaxes(showgrid=True, linecolor='#e2e8f0', gridcolor='#f1f5f9', tickfont=dict(family="Manrope, sans-serif", size=9))
+    fig.update_xaxes(title=None, showgrid=False, linecolor='#cbd5e1', gridcolor='#f1f5f9', tickfont=dict(family="Manrope, sans-serif", size=9))
+    fig.update_yaxes(title=None, showgrid=True, linecolor='#cbd5e1', gridcolor='#f1f5f9', tickfont=dict(family="Manrope, sans-serif", size=9))
     return fig
 
 # Segment Preference Configurations
@@ -236,20 +297,20 @@ st.sidebar.markdown("""
 page = st.sidebar.radio(
     "Select Tab View",
     [
-        "🏠 Overview",
-        "📈 Price Drivers",
-        "🗺️ Location Intelligence",
-        "👥 Renter Segments",
-        "🔍 Find Your Rental",
-        "📊 Locality Comparison",
-        "ℹ️ Methodology"
+        "Overview",
+        "Price Drivers",
+        "Location Intelligence",
+        "Renter Segments",
+        "Find Your Rental",
+        "Locality Comparison",
+        "Methodology"
     ],
     label_visibility="collapsed"
 )
 
 # Sidebar metadata
 st.sidebar.markdown(f"""
-<div style='margin-top: 2rem; border-top: 1px solid #1e293b; padding-top: 1rem; font-size: 10px; color: #94a3b8; line-height: 1.6;'>
+<div style='margin-top: 2rem; border-top: 1px solid #1e293b; padding-top: 1rem; font-size: 10px; color: #94a3b8; line-height: 1.8;'>
     <div style='display: flex; justify-content: space-between;'>
         <span>Listings Analyzed:</span>
         <span style='font-weight: 700; color: #ffffff;'>{len(df_raw)}</span>
@@ -258,12 +319,51 @@ st.sidebar.markdown(f"""
         <span>Data Period:</span>
         <span style='color: #ffffff; font-weight: 500;'>Q3 2026</span>
     </div>
-    <div style='display: flex; justify-content: space-between;'>
+    <div style='display: flex; justify-content: space-between; margin-bottom: 0.75rem;'>
         <span>Last Updated:</span>
         <span style='color: #ffffff;'>Aug 2026</span>
     </div>
+    <div style='color: #64748b; font-size: 9px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em; border-top: 1px solid #1e293b; padding-top: 0.5rem;'>
+        Data Status: Simulated Prototype
+    </div>
 </div>
 """, unsafe_allow_html=True)
+
+# Header title helper and PAGE_INFO
+PAGE_INFO = {
+    "Overview": {
+        "title": "Market Overview",
+        "subtitle": "A data-driven view of residential rental prices, property characteristics and affordability."
+    },
+    "Price Drivers": {
+        "title": "What Drives Rental Prices?",
+        "subtitle": "An analysis of parameters triggering rental premiums, sizing correlations, and transit access."
+    },
+    "Location Intelligence": {
+        "title": "Location Intelligence",
+        "subtitle": "Explore spatial rental distributions, property sizes, and coordinate mapping across NCR zones."
+    },
+    "Renter Segments": {
+        "title": "Renter Segments",
+        "subtitle": "Contrasting space requirements, budget parameters, and connectivity weights across renter profiles."
+    },
+    "Find Your Rental": {
+        "title": "Find Your Rental",
+        "subtitle": "Select your renter profile and preferences to display matched properties sorted by Value Score."
+    },
+    "Locality Comparison": {
+        "title": "Locality Comparison",
+        "subtitle": "Select up to three localities to analyze rent, connectivity, and amenities side-by-side."
+    },
+    "Methodology": {
+        "title": "Methodology & Data Parameters",
+        "subtitle": "Methodology transparency, scoring weight models, data parameters, and analytical limitations."
+    }
+}
+info = PAGE_INFO.get(page, PAGE_INFO["Overview"])
+st.markdown(f"<h1 style='font-size: 28px; font-weight: 700; color: #0f172a; margin-bottom: 0.15rem; font-family: Manrope, sans-serif;'>{info['title']}</h1>", unsafe_allow_html=True)
+st.markdown(f"<p style='font-size: 13px; font-weight: 500; color: #64748b; margin-bottom: 1.25rem; font-family: Manrope, sans-serif; letter-spacing: 0.01em;'>{info['subtitle']}</p>", unsafe_allow_html=True)
+st.markdown("<hr style='margin-top: 0; margin-bottom: 1.5rem; border: 0; border-top: 1px solid #e2e8f0;'>", unsafe_allow_html=True)
 
 # Helper: Filter values
 selected_city = "All"
@@ -273,8 +373,8 @@ selected_bedrooms = "All"
 selected_furnishing = "All"
 selected_budget = int(df_raw['monthly_rent'].max())
 
-# Horizontal Analysis Controls for Overview and Price Drivers
-if page in ["🏠 Overview", "📈 Price Drivers"]:
+# Horizontal Analysis Controls for Overview and Price Drivers (renders BELOW title/subtitle/divider)
+if page in ["Overview", "Price Drivers"]:
     with st.container(border=True):
         st.markdown("<div style='font-size: 11px; font-weight: 700; color: #0f172a; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;'>Analysis Controls</div>", unsafe_allow_html=True)
         f_cols = st.columns(6)
@@ -298,7 +398,12 @@ if page in ["🏠 Overview", "📈 Price Drivers"]:
             selected_furnishing = st.selectbox("Furnishing Status", furnishing)
         with f_cols[5]:
             max_rent_limit = int(df_raw['monthly_rent'].max())
-            selected_budget = st.slider("Max Budget (₹)", min_value=5000, max_value=max_rent_limit, value=max_rent_limit, step=2500)
+            if 'budget_slider' in st.session_state:
+                cur_budget = st.session_state.budget_slider
+                slider_label = "Max Budget: No Limit" if cur_budget == max_rent_limit else f"Max Budget: ₹{cur_budget:,}"
+            else:
+                slider_label = "Max Budget: No Limit"
+            selected_budget = st.slider(slider_label, min_value=5000, max_value=max_rent_limit, value=max_rent_limit, step=2500, key='budget_slider')
 
 # Filter dataset based on selections
 df_filtered = df_raw.copy()
@@ -313,54 +418,9 @@ if selected_bedrooms != "All":
 if selected_furnishing != "All":
     df_filtered = df_filtered[df_filtered['furnishing_status'] == selected_furnishing]
 df_filtered = df_filtered[df_filtered['monthly_rent'] <= selected_budget]
-# System Status Diagnostics (Collapsed)
-with st.sidebar.expander("System Diagnostic Check", expanded=False):
-    st.markdown(f"""
-    <div style='font-size: 10px; color: #64748b; line-height: 1.4;'>
-        <strong>Streamlit:</strong> {st.__version__}<br>
-        <strong>WD:</strong> {os.getcwd()[:20]}...<br>
-        <strong>Config:</strong> {'Found' if os.path.exists('.streamlit/config.toml') else 'Missing'}<br>
-        <strong>Clean CSV:</strong> {'Found' if os.path.exists('data/processed/rental_listings_cleaned.csv') else 'Missing'}
-    </div>
-    """, unsafe_allow_html=True)
-
-# Header title helper
-PAGE_INFO = {
-    "🏠 Overview": {
-        "title": "Market Overview",
-        "subtitle": "A data-driven view of residential rental prices, property characteristics and affordability."
-    },
-    "📈 Price Drivers": {
-        "title": "What Drives Rental Prices?",
-        "subtitle": "An analysis of parameters triggering rental premiums, sizing correlations, and transit access."
-    },
-    "🗺️ Location Intelligence": {
-        "title": "Location Intelligence",
-        "subtitle": "Explore spatial rental distributions, property sizes, and coordinate mapping across NCR zones."
-    },
-    "👥 Renter Segments": {
-        "title": "Renter Segments",
-        "subtitle": "Contrasting space requirements, budget parameters, and connectivity weights across renter profiles."
-    },
-    "🔍 Find Your Rental": {
-        "title": "Find Your Rental",
-        "subtitle": "Select your renter profile and preferences to display matched properties sorted by Value Score."
-    },
-    "📊 Locality Comparison": {
-        "title": "Locality Comparison",
-        "subtitle": "Select up to three localities to analyze rent, connectivity, and amenities side-by-side."
-    },
-    "ℹ️ Methodology": {
-        "title": "Methodology & Data Parameters",
-        "subtitle": "Methodology transparency, scoring weight models, data parameters, and analytical limitations."
-    }
-}
-info = PAGE_INFO.get(page, PAGE_INFO["🏠 Overview"])
-st.markdown(f"<h1 style='font-size: 28px; font-weight: 700; color: #0f172a; margin-bottom: 0.15rem; font-family: Manrope, sans-serif;'>{info['title']}</h1>", unsafe_allow_html=True)
-st.markdown(f"<p style='font-size: 13px; font-weight: 500; color: #64748b; margin-bottom: 1.75rem; font-family: Manrope, sans-serif; letter-spacing: 0.01em;'>{info['subtitle']}</p>", unsafe_allow_html=True)
 
 # ----------------- OVERVIEW PAGE -----------------
-if page == "🏠 Overview":
+if page == "Overview":
     if df_filtered.empty:
         st.warning("No listings match your filter selections. Try adjusting the budget or location filters in the Analysis Controls panel.")
         st.stop()
@@ -390,29 +450,29 @@ if page == "🏠 Overview":
     </style>
     <div class='kpi-grid'>
         <div class='kpi-container'>
-            <div class='kpi-title'>Total Listings</div>
+            <div class='kpi-title'>TOTAL LISTINGS</div>
             <div class='kpi-value'>{len(df_filtered)}</div>
-            <div class='kpi-subtext'>Active records</div>
+            <div class='kpi-subtext'>Active in dataset</div>
         </div>
         <div class='kpi-container'>
-            <div class='kpi-title'>Median Rent</div>
+            <div class='kpi-title'>MEDIAN MONTHLY RENT</div>
             <div class='kpi-value'>₹{int(median_rent):,}</div>
             <div class='kpi-subtext'>Avg: ₹{int(avg_rent):,}</div>
         </div>
         <div class='kpi-container'>
-            <div class='kpi-title'>Median Rent / Sq.Ft</div>
+            <div class='kpi-title'>MEDIAN RENT / SQ.FT.</div>
             <div class='kpi-value'>₹{median_sqft:.1f}/sqft</div>
             <div class='kpi-subtext'>Carpet area basis</div>
         </div>
         <div class='kpi-container'>
-            <div class='kpi-title'>Average Size</div>
+            <div class='kpi-title'>AVERAGE PROPERTY SIZE</div>
             <div class='kpi-value'>{int(avg_size)} sqft</div>
             <div class='kpi-subtext'>Floor space average</div>
         </div>
         <div class='kpi-container'>
-            <div class='kpi-title'>Median Deposit</div>
+            <div class='kpi-title'>MEDIAN SECURITY DEPOSIT</div>
             <div class='kpi-value'>₹{int(median_deposit):,}</div>
-            <div class='kpi-subtext'>~{deposit_ratio:.1f}x Rent</div>
+            <div class='kpi-subtext'>~{deposit_ratio:.1f}x monthly rent</div>
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -422,7 +482,7 @@ if page == "🏠 Overview":
     chart_cols = st.columns(2)
     
     with chart_cols[0]:
-        st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569;'>Top 10 Localities by Rent (Median)</h4>", unsafe_allow_html=True)
+        st.markdown("<h4 style='font-size: 11px; font-weight: 700; text-transform: uppercase; color: #0f172a; letter-spacing: 0.05em;'>TOP 10 LOCALITIES BY RENT (MEDIAN)</h4>", unsafe_allow_html=True)
         locality_rents = df_filtered.groupby('locality')['monthly_rent'].median().reset_index().sort_values(by='monthly_rent', ascending=True).tail(10)
         fig_loc = px.bar(
             locality_rents, 
@@ -430,57 +490,57 @@ if page == "🏠 Overview":
             x='monthly_rent', 
             orientation='h',
             labels={'locality': 'Locality', 'monthly_rent': 'Median Monthly Rent (₹)'},
-            color_discrete_sequence=['#1e3a8a']
+            color_discrete_sequence=['#334155']
         )
-        fig_loc = style_plotly_fig(fig_loc, height=300)
+        fig_loc = style_plotly_fig(fig_loc, height=260)
         st.plotly_chart(fig_loc, use_container_width=True)
         
     with chart_cols[1]:
-        st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569;'>Rent Distribution Bins</h4>", unsafe_allow_html=True)
+        st.markdown("<h4 style='font-size: 11px; font-weight: 700; text-transform: uppercase; color: #0f172a; letter-spacing: 0.05em;'>RENT DISTRIBUTION (LISTINGS COUNT)</h4>", unsafe_allow_html=True)
         fig_dist = px.histogram(
             df_filtered, 
             x='monthly_rent',
             nbins=12,
             labels={'monthly_rent': 'Monthly Rent (₹)', 'count': 'Listings'},
-            color_discrete_sequence=['#3b82f6']
+            color_discrete_sequence=['#475569']
         )
-        fig_dist = style_plotly_fig(fig_dist, height=300)
+        fig_dist = style_plotly_fig(fig_dist, height=260)
         st.plotly_chart(fig_dist, use_container_width=True)
         
     st.markdown("<br>", unsafe_allow_html=True)
     sub_cols = st.columns(3)
     
     with sub_cols[0]:
-        st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569;'>BHK Type Distribution</h4>", unsafe_allow_html=True)
+        st.markdown("<h4 style='font-size: 11px; font-weight: 700; text-transform: uppercase; color: #0f172a; letter-spacing: 0.05em;'>BHK TYPE DISTRIBUTION</h4>", unsafe_allow_html=True)
         bhk_counts = df_filtered['property_type'].value_counts().reset_index()
         bhk_counts.columns = ['BHK Type', 'Count']
-        fig_bhk = px.pie(bhk_counts, values='Count', names='BHK Type', color_discrete_sequence=['#1e3a8a', '#2563eb', '#3b82f6', '#64748b', '#cbd5e1'])
-        fig_bhk = style_plotly_fig(fig_bhk, height=220)
+        fig_bhk = px.pie(bhk_counts, values='Count', names='BHK Type', color_discrete_sequence=['#0f172a', '#334155', '#475569', '#64748b', '#cbd5e1'])
+        fig_bhk = style_plotly_fig(fig_bhk, height=200)
         st.plotly_chart(fig_bhk, use_container_width=True)
         
     with sub_cols[1]:
-        st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569;'>Furnishing Status</h4>", unsafe_allow_html=True)
+        st.markdown("<h4 style='font-size: 11px; font-weight: 700; text-transform: uppercase; color: #0f172a; letter-spacing: 0.05em;'>FURNISHING DISTRIBUTION</h4>", unsafe_allow_html=True)
         furn_counts = df_filtered['furnishing_status'].value_counts().reset_index()
         furn_counts.columns = ['Status', 'Count']
-        fig_furn = px.pie(furn_counts, values='Count', names='Status', color_discrete_sequence=['#1e3a8a', '#3b82f6', '#cbd5e1'])
-        fig_furn = style_plotly_fig(fig_furn, height=220)
+        fig_furn = px.pie(furn_counts, values='Count', names='Status', color_discrete_sequence=['#0f172a', '#475569', '#94a3b8'])
+        fig_furn = style_plotly_fig(fig_furn, height=200)
         st.plotly_chart(fig_furn, use_container_width=True)
         
     with sub_cols[2]:
-        st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569;'>Median Rent by City</h4>", unsafe_allow_html=True)
+        st.markdown("<h4 style='font-size: 11px; font-weight: 700; text-transform: uppercase; color: #0f172a; letter-spacing: 0.05em;'>MEDIAN RENT BY CITY</h4>", unsafe_allow_html=True)
         city_median = df_filtered.groupby('city')['monthly_rent'].median().reset_index().sort_values(by='monthly_rent', ascending=False)
         fig_city = px.bar(
             city_median, 
             x='city', 
             y='monthly_rent', 
             labels={'city': 'City', 'monthly_rent': 'Rent (₹)'},
-            color_discrete_sequence=['#1e3a8a']
+            color_discrete_sequence=['#334155']
         )
-        fig_city = style_plotly_fig(fig_city, height=220)
+        fig_city = style_plotly_fig(fig_city, height=200)
         st.plotly_chart(fig_city, use_container_width=True)
 
 # ----------------- PRICE DRIVERS PAGE -----------------
-elif page == "📈 Price Drivers":
+elif page == "Price Drivers":
     if df_filtered.empty:
         st.warning("No listings match your filter selections. Try adjusting the budget or location filters in the Analysis Controls panel.")
         st.stop()
@@ -597,7 +657,7 @@ elif page == "📈 Price Drivers":
                 """, unsafe_allow_html=True)
 
 # ----------------- LOCATION INTELLIGENCE PAGE -----------------
-elif page == "🗺️ Location Intelligence":
+elif page == "Location Intelligence":
     # 1. Metric selector
     m_cols = st.columns([3, 1])
     with m_cols[0]:
@@ -835,7 +895,7 @@ elif page == "🗺️ Location Intelligence":
     st.dataframe(df_matrix_show, use_container_width=True, hide_index=True)
 
 # ----------------- RENTER SEGMENTS PAGE -----------------
-elif page == "👥 Renter Segments":
+elif page == "Renter Segments":
     st.markdown("<p style='font-size: 12px; color: #475569; margin-bottom: 1.5rem;'>Contrasting space requirements, budget parameters, and transit connectivity weights across renter demographics.</p>", unsafe_allow_html=True)
     
     # Construct weights dataframe for comparison
@@ -903,7 +963,7 @@ elif page == "👥 Renter Segments":
         fig_radar = style_plotly_fig(fig_radar, height=280)
         st.plotly_chart(fig_radar, use_container_width=True)
 # ----------------- FIND YOUR RENTAL PAGE -----------------
-elif page == "🔍 Find Your Rental":
+elif page == "Find Your Rental":
     st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569; border-b: 1px solid #e2e8f0; padding-bottom: 0.5rem;'>Your Requirements</h4>", unsafe_allow_html=True)
     
     setup_cols = st.columns(4)
@@ -1018,7 +1078,7 @@ elif page == "🔍 Find Your Rental":
                     st.write(f"**Total Estimated Housing Cost:** **₹{int(total):,}/month**")
 
 # ----------------- LOCALITY COMPARISON PAGE -----------------
-elif page == "📊 Locality Comparison":
+elif page == "Locality Comparison":
     st.markdown("<p style='font-size: 12px; color: #475569; margin-bottom: 1.5rem;'>Select up to three localities to compare rents, connectivity parameters, and Value Scores side-by-side.</p>", unsafe_allow_html=True)
     
     localities = sorted(list(df_raw['locality'].unique()))
@@ -1073,7 +1133,7 @@ elif page == "📊 Locality Comparison":
         st.plotly_chart(fig_comp, use_container_width=True)
 
 # ----------------- METHODOLOGY PAGE -----------------
-elif page == "ℹ️ Methodology":
+elif page == "Methodology":
     st.markdown("""
     <div style='background: white; border: 1px solid #e2e8f0; border-radius: 4px; padding: 1.5rem; space-y: 1.5rem;'>
         <h4 style='font-size: 13px; text-transform: uppercase; color: #0f172a; margin-top: 0;'>Prototype Dataset Notice</h4>
