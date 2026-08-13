@@ -56,8 +56,20 @@ st.markdown("""
     }
     
     /* Hide the radio dot circles completely */
-    div[role="radiogroup"] label span[data-baseweb="radio"] {
+    div[role="radiogroup"] label span[data-baseweb="radio"],
+    div[role="radiogroup"] label div[data-checked],
+    div[role="radiogroup"] label div:first-child:not([data-testid="stMarkdownContainer"]),
+    div[role="radiogroup"] label svg {
         display: none !important;
+    }
+    
+    /* Style label text for horizontal filters block to match React uppercase styling */
+    [data-testid="stHorizontalBlock"] label p {
+        font-size: 10px !important;
+        font-weight: 700 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.05em !important;
+        color: #475569 !important;
     }
     
     /* Sidebar radio buttons styling */
@@ -380,30 +392,43 @@ if page in ["Overview", "Price Drivers"]:
         f_cols = st.columns(6)
         with f_cols[0]:
             cities = ["All"] + sorted(list(df_raw['city'].unique()))
-            selected_city = st.selectbox("City", cities)
+            selected_city = st.selectbox("CITY", cities)
         with f_cols[1]:
             if selected_city != "All":
                 filtered_localities = sorted(list(df_raw[df_raw['city'] == selected_city]['locality'].unique()))
             else:
                 filtered_localities = sorted(list(df_raw['locality'].unique()))
-            selected_locality = st.selectbox("Locality", ["All"] + filtered_localities)
+            selected_locality = st.selectbox("LOCALITY", ["All"] + filtered_localities)
         with f_cols[2]:
             property_types = ["All"] + sorted(list(df_raw['property_type'].unique()))
-            selected_bhk = st.selectbox("BHK Type", property_types)
+            selected_bhk = st.selectbox("BHK TYPE", property_types)
         with f_cols[3]:
             bedrooms_list = ["All"] + sorted([str(int(x)) for x in df_raw['bedrooms'].dropna().unique()])
-            selected_bedrooms = st.selectbox("Bedrooms", bedrooms_list)
+            selected_bedrooms = st.selectbox("BEDROOMS", bedrooms_list)
         with f_cols[4]:
             furnishing = ["All"] + sorted(list(df_raw['furnishing_status'].unique()))
-            selected_furnishing = st.selectbox("Furnishing Status", furnishing)
+            selected_furnishing = st.selectbox("FURNISHING", furnishing)
         with f_cols[5]:
             max_rent_limit = int(df_raw['monthly_rent'].max())
-            if 'budget_slider' in st.session_state:
-                cur_budget = st.session_state.budget_slider
-                slider_label = "Max Budget: No Limit" if cur_budget == max_rent_limit else f"Max Budget: ₹{cur_budget:,}"
-            else:
-                slider_label = "Max Budget: No Limit"
-            selected_budget = st.slider(slider_label, min_value=5000, max_value=max_rent_limit, value=max_rent_limit, step=2500, key='budget_slider')
+            # Define specific select options for the budget slider
+            budget_options = [5000, 7500, 10000, 12500, 15000, 17500, 20000, 22500, 25000, 30000, 35000, 40000, 45000, 50000, 60000, 70000, 80000, 90000, 100000, 125000, 150000, 175000, 200000, 250000, 300000]
+            budget_options = [x for x in budget_options if x < max_rent_limit]
+            budget_options.append(max_rent_limit)
+            
+            slider_options = budget_options + ["No Limit"]
+            
+            def format_budget(val):
+                if val == "No Limit":
+                    return "No Limit"
+                return f"₹{val:,}"
+            
+            selected_val = st.select_slider(
+                "MAX BUDGET",
+                options=slider_options,
+                value="No Limit",
+                format_func=format_budget
+            )
+            selected_budget = max_rent_limit if selected_val == "No Limit" else selected_val
 
 # Filter dataset based on selections
 df_filtered = df_raw.copy()
@@ -497,11 +522,33 @@ if page == "Overview":
         
     with chart_cols[1]:
         st.markdown("<h4 style='font-size: 11px; font-weight: 700; text-transform: uppercase; color: #0f172a; letter-spacing: 0.05em;'>RENT DISTRIBUTION (LISTINGS COUNT)</h4>", unsafe_allow_html=True)
-        fig_dist = px.histogram(
-            df_filtered, 
-            x='monthly_rent',
-            nbins=12,
-            labels={'monthly_rent': 'Monthly Rent (₹)', 'count': 'Listings'},
+        
+        def get_rent_bin(rent):
+            if rent < 10000:
+                return '<10k'
+            elif rent < 15000:
+                return '10k–15k'
+            elif rent < 20000:
+                return '15k–20k'
+            elif rent < 30000:
+                return '20k–30k'
+            elif rent < 45000:
+                return '30k–45k'
+            elif rent < 60000:
+                return '45k–60k'
+            elif rent <= 100000:
+                return '60k–1L'
+            else:
+                return '>1L'
+                
+        bins_order = ['<10k', '10k–15k', '15k–20k', '20k–30k', '30k–45k', '45k–60k', '60k–1L', '>1L']
+        df_bins = df_filtered['monthly_rent'].apply(get_rent_bin).value_counts().reindex(bins_order, fill_value=0).reset_index()
+        df_bins.columns = ['Rent Range', 'Listings']
+        
+        fig_dist = px.bar(
+            df_bins, 
+            x='Rent Range',
+            y='Listings',
             color_discrete_sequence=['#475569']
         )
         fig_dist = style_plotly_fig(fig_dist, height=260)
