@@ -41,8 +41,45 @@ st.markdown("""
 
     /* Sidebar controls and navigation tweaks */
     section[data-testid="stSidebar"] {
-        background-color: #ffffff !important;
-        border-right: 1px solid #e2e8f0 !important;
+        background-color: #0f172a !important;
+        border-right: 1px solid #1e293b !important;
+    }
+    section[data-testid="stSidebar"] * {
+        color: #e2e8f0 !important;
+    }
+    
+    /* Hide the radio dot circles completely */
+    div[role="radiogroup"] label span[data-baseweb="radio"] {
+        display: none !important;
+    }
+    
+    /* Sidebar radio buttons styling */
+    div[role="radiogroup"] label {
+        background-color: transparent !important;
+        padding: 0.5rem 0.75rem !important;
+        border-radius: 6px !important;
+        margin-bottom: 0.25rem !important;
+        width: 100% !important;
+        cursor: pointer !important;
+    }
+    div[role="radiogroup"] label:hover {
+        background-color: rgba(255, 255, 255, 0.05) !important;
+    }
+    div[role="radiogroup"] label:has(div[data-checked="true"]) {
+        background-color: #3b82f6 !important; /* Active blue background */
+    }
+    div[role="radiogroup"] label:has(div[data-checked="true"]) p,
+    div[role="radiogroup"] label:has(div[data-checked="true"]) div {
+        color: #ffffff !important;
+        font-weight: 700 !important;
+    }
+    div[role="radiogroup"] label p, div[role="radiogroup"] label div {
+        color: #94a3b8 !important;
+        font-size: 13px !important;
+        transition: color 0.15s ease !important;
+    }
+    div[role="radiogroup"] label:hover p, div[role="radiogroup"] label:hover div {
+        color: #ffffff !important;
     }
     
     /* KPI Card styling to match React dashboard visual hierarchy */
@@ -130,7 +167,7 @@ st.markdown("""
 
 # Helper: Load dataset
 @st.cache_data
-def load_data():
+def load_cleaned_dataset():
     # Detect running path relative to app.py location
     possible_paths = [
         "data/processed/rental_listings_cleaned.csv",
@@ -152,7 +189,7 @@ def load_data():
     raise FileNotFoundError("Could not find rental_listings_cleaned.csv dataset.")
 
 try:
-    df_raw = load_data()
+    df_raw = load_cleaned_dataset()
 except Exception as e:
     st.error(f"Error loading dataset: {e}")
     st.stop()
@@ -185,62 +222,97 @@ WEIGHTS = {
     'Family': {'rent': 0.20, 'space': 0.15, 'school': 0.20, 'hospital': 0.15, 'safety': 0.20, 'metro_office': 0.10}
 }
 
-# Navigation Menu
-st.sidebar.markdown("<h2 style='font-size: 14px; margin-bottom: 1rem; color: white;'>Navigation Controls</h2>", unsafe_allow_html=True)
+# Sidebar Brand Header
+st.sidebar.markdown("""
+<div style="display: flex; align-items: center; padding: 0.5rem 0; margin-bottom: 1rem; gap: 10px;">
+    <span style="height: 20px; width: 4px; background-color: #6366f1; border-radius: 2px; display: inline-block;"></span>
+    <div style="display: flex; flex-direction: column; line-height: 1.2;">
+        <span style="font-weight: 700; font-size: 13px; color: #ffffff; letter-spacing: 0.05em; text-transform: uppercase;">Delhi/NCR Rental</span>
+        <span style="font-size: 9px; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;">Market Intelligence</span>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
 page = st.sidebar.radio(
     "Select Tab View",
-    ["Overview", "Price Drivers", "Renter Segments", "Find Your Rental", "Locality Comparison", "Methodology"],
+    [
+        "🏠 Overview",
+        "📈 Price Drivers",
+        "🗺️ Location Intelligence",
+        "👥 Renter Segments",
+        "🔍 Find Your Rental",
+        "📊 Locality Comparison",
+        "ℹ️ Methodology"
+    ],
     label_visibility="collapsed"
 )
 
 # Sidebar metadata
-st.sidebar.markdown("---")
 st.sidebar.markdown(f"""
-<div style='font-size: 10px; color: #94a3b8; line-height: 1.5;'>
-    <strong>Listings Analyzed:</strong> {len(df_raw)}<br>
-    <strong>Data Period:</strong> Q3 2026<br>
-    <strong>Last Updated:</strong> Aug 2026<br>
-    <strong>Data Status:</strong> Simulated Prototype
+<div style='margin-top: 2rem; border-top: 1px solid #1e293b; padding-top: 1rem; font-size: 10px; color: #94a3b8; line-height: 1.6;'>
+    <div style='display: flex; justify-content: space-between;'>
+        <span>Listings Analyzed:</span>
+        <span style='font-weight: 700; color: #ffffff;'>{len(df_raw)}</span>
+    </div>
+    <div style='display: flex; justify-content: space-between;'>
+        <span>Data Period:</span>
+        <span style='color: #ffffff; font-weight: 500;'>Q3 2026</span>
+    </div>
+    <div style='display: flex; justify-content: space-between;'>
+        <span>Last Updated:</span>
+        <span style='color: #ffffff;'>Aug 2026</span>
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
-# Global Filters only active for Overview and Price Drivers
-if page in ["Overview", "Price Drivers"]:
-    st.sidebar.markdown("---")
-    st.sidebar.markdown("<span style='font-size: 10px; font-weight: bold; text-transform: uppercase; color: #94a3b8;'>Data Scope Filters</span>", unsafe_allow_html=True)
-    
-    cities = ["All"] + sorted(list(df_raw['city'].unique()))
-    selected_city = st.sidebar.selectbox("City", cities)
-    
-    if selected_city != "All":
-        filtered_localities = sorted(list(df_raw[df_raw['city'] == selected_city]['locality'].unique()))
-    else:
-        filtered_localities = sorted(list(df_raw['locality'].unique()))
-    
-    selected_locality = st.sidebar.selectbox("Locality", ["All"] + filtered_localities)
-    
-    property_types = ["All"] + sorted(list(df_raw['property_type'].unique()))
-    selected_bhk = st.sidebar.selectbox("BHK Type", property_types)
-    
-    furnishing = ["All"] + sorted(list(df_raw['furnishing_status'].unique()))
-    selected_furnishing = st.sidebar.selectbox("Furnishing Status", furnishing)
-    
-    max_rent_limit = float(df_raw['monthly_rent'].max())
-    selected_budget = st.sidebar.slider("Maximum Budget (₹)", min_value=5000, max_value=int(max_rent_limit), value=int(max_rent_limit), step=2500)
-    
-    # Filter dataset
-    df_filtered = df_raw.copy()
-    if selected_city != "All":
-        df_filtered = df_filtered[df_filtered['city'] == selected_city]
-    if selected_locality != "All":
-        df_filtered = df_filtered[df_filtered['locality'] == selected_locality]
-    if selected_bhk != "All":
-        df_filtered = df_filtered[df_filtered['property_type'] == selected_bhk]
-    if selected_furnishing != "All":
-        df_filtered = df_filtered[df_filtered['furnishing_status'] == selected_furnishing]
-    df_filtered = df_filtered[df_filtered['monthly_rent'] <= selected_budget]
-else:
-    df_filtered = df_raw.copy()
+# Helper: Filter values
+selected_city = "All"
+selected_locality = "All"
+selected_bhk = "All"
+selected_bedrooms = "All"
+selected_furnishing = "All"
+selected_budget = int(df_raw['monthly_rent'].max())
+
+# Horizontal Analysis Controls for Overview and Price Drivers
+if page in ["🏠 Overview", "📈 Price Drivers"]:
+    with st.container(border=True):
+        st.markdown("<div style='font-size: 11px; font-weight: 700; color: #0f172a; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;'>Analysis Controls</div>", unsafe_allow_html=True)
+        f_cols = st.columns(6)
+        with f_cols[0]:
+            cities = ["All"] + sorted(list(df_raw['city'].unique()))
+            selected_city = st.selectbox("City", cities)
+        with f_cols[1]:
+            if selected_city != "All":
+                filtered_localities = sorted(list(df_raw[df_raw['city'] == selected_city]['locality'].unique()))
+            else:
+                filtered_localities = sorted(list(df_raw['locality'].unique()))
+            selected_locality = st.selectbox("Locality", ["All"] + filtered_localities)
+        with f_cols[2]:
+            property_types = ["All"] + sorted(list(df_raw['property_type'].unique()))
+            selected_bhk = st.selectbox("BHK Type", property_types)
+        with f_cols[3]:
+            bedrooms_list = ["All"] + sorted([str(int(x)) for x in df_raw['bedrooms'].dropna().unique()])
+            selected_bedrooms = st.selectbox("Bedrooms", bedrooms_list)
+        with f_cols[4]:
+            furnishing = ["All"] + sorted(list(df_raw['furnishing_status'].unique()))
+            selected_furnishing = st.selectbox("Furnishing Status", furnishing)
+        with f_cols[5]:
+            max_rent_limit = int(df_raw['monthly_rent'].max())
+            selected_budget = st.slider("Max Budget (₹)", min_value=5000, max_value=max_rent_limit, value=max_rent_limit, step=2500)
+
+# Filter dataset based on selections
+df_filtered = df_raw.copy()
+if selected_city != "All":
+    df_filtered = df_filtered[df_filtered['city'] == selected_city]
+if selected_locality != "All":
+    df_filtered = df_filtered[df_filtered['locality'] == selected_locality]
+if selected_bhk != "All":
+    df_filtered = df_filtered[df_filtered['property_type'] == selected_bhk]
+if selected_bedrooms != "All":
+    df_filtered = df_filtered[df_filtered['bedrooms'] == int(selected_bedrooms)]
+if selected_furnishing != "All":
+    df_filtered = df_filtered[df_filtered['furnishing_status'] == selected_furnishing]
+df_filtered = df_filtered[df_filtered['monthly_rent'] <= selected_budget]
 # System Status Diagnostics (Collapsed)
 with st.sidebar.expander("System Diagnostic Check", expanded=False):
     st.markdown(f"""
@@ -253,13 +325,44 @@ with st.sidebar.expander("System Diagnostic Check", expanded=False):
     """, unsafe_allow_html=True)
 
 # Header title helper
-st.markdown(f"<h1 style='font-size: 32px; font-weight: 700; color: #0f172a; margin-bottom: 0.15rem; font-family: Manrope, sans-serif;'>{page}</h1>", unsafe_allow_html=True)
-st.markdown("<p style='font-size: 13px; font-weight: 500; color: #64748b; margin-bottom: 1.75rem; font-family: Manrope, sans-serif; letter-spacing: 0.02em;'>Delhi/NCR Rental Market Intelligence &middot; Internal BI Case Study</p>", unsafe_allow_html=True)
+PAGE_INFO = {
+    "🏠 Overview": {
+        "title": "Market Overview",
+        "subtitle": "A data-driven view of residential rental prices, property characteristics and affordability."
+    },
+    "📈 Price Drivers": {
+        "title": "What Drives Rental Prices?",
+        "subtitle": "An analysis of parameters triggering rental premiums, sizing correlations, and transit access."
+    },
+    "🗺️ Location Intelligence": {
+        "title": "Location Intelligence",
+        "subtitle": "Explore spatial rental distributions, property sizes, and coordinate mapping across NCR zones."
+    },
+    "👥 Renter Segments": {
+        "title": "Renter Segments",
+        "subtitle": "Contrasting space requirements, budget parameters, and connectivity weights across renter profiles."
+    },
+    "🔍 Find Your Rental": {
+        "title": "Find Your Rental",
+        "subtitle": "Select your renter profile and preferences to display matched properties sorted by Value Score."
+    },
+    "📊 Locality Comparison": {
+        "title": "Locality Comparison",
+        "subtitle": "Select up to three localities to analyze rent, connectivity, and amenities side-by-side."
+    },
+    "ℹ️ Methodology": {
+        "title": "Methodology & Data Parameters",
+        "subtitle": "Methodology transparency, scoring weight models, data parameters, and analytical limitations."
+    }
+}
+info = PAGE_INFO.get(page, PAGE_INFO["🏠 Overview"])
+st.markdown(f"<h1 style='font-size: 28px; font-weight: 700; color: #0f172a; margin-bottom: 0.15rem; font-family: Manrope, sans-serif;'>{info['title']}</h1>", unsafe_allow_html=True)
+st.markdown(f"<p style='font-size: 13px; font-weight: 500; color: #64748b; margin-bottom: 1.75rem; font-family: Manrope, sans-serif; letter-spacing: 0.01em;'>{info['subtitle']}</p>", unsafe_allow_html=True)
 
 # ----------------- OVERVIEW PAGE -----------------
-if page == "Overview":
+if page == "🏠 Overview":
     if df_filtered.empty:
-        st.warning("No listings match your filter selections. Try adjusting the Sidebar sliders.")
+        st.warning("No listings match your filter selections. Try adjusting the budget or location filters in the Analysis Controls panel.")
         st.stop()
         
     # KPIs Row
@@ -269,17 +372,50 @@ if page == "Overview":
     avg_size = df_filtered['area_sqft'].mean()
     median_deposit = df_filtered['security_deposit'].median()
     
-    cols = st.columns(5)
-    with cols[0]:
-        st.markdown(f"""<div class='kpi-container'><div class='kpi-title'>Total Listings</div><div class='kpi-value'>{len(df_filtered)}</div><div class='kpi-subtext'>Active records</div></div>""", unsafe_allow_html=True)
-    with cols[1]:
-        st.markdown(f"""<div class='kpi-container'><div class='kpi-title'>Median Rent</div><div class='kpi-value'>₹{int(median_rent):,}</div><div class='kpi-subtext'>Avg: ₹{int(avg_rent):,}</div></div>""", unsafe_allow_html=True)
-    with cols[2]:
-        st.markdown(f"""<div class='kpi-container'><div class='kpi-title'>Median Rent / Sq.Ft</div><div class='kpi-value'>₹{int(median_sqft)}</div><div class='kpi-subtext'>Carpet area basis</div></div>""", unsafe_allow_html=True)
-    with cols[3]:
-        st.markdown(f"""<div class='kpi-container'><div class='kpi-title'>Average Size</div><div class='kpi-value'>{int(avg_size)} sqft</div><div class='kpi-subtext'>Floor space average</div></div>""", unsafe_allow_html=True)
-    with cols[4]:
-        st.markdown(f"""<div class='kpi-container'><div class='kpi-title'>Median Deposit</div><div class='kpi-value'>₹{int(median_deposit):,}</div><div class='kpi-subtext'>~{(median_deposit/median_rent):.1f}x Rent</div></div>""", unsafe_allow_html=True)
+    deposit_ratio = (median_deposit / median_rent) if median_rent > 0 else 0
+    
+    st.markdown(f"""
+    <style>
+        .kpi-grid {{
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+            margin-bottom: 1rem;
+        }}
+        @media (max-width: 768px) {{
+            .kpi-grid {{
+                grid-template-columns: repeat(2, 1fr) !important;
+            }}
+        }}
+    </style>
+    <div class='kpi-grid'>
+        <div class='kpi-container'>
+            <div class='kpi-title'>Total Listings</div>
+            <div class='kpi-value'>{len(df_filtered)}</div>
+            <div class='kpi-subtext'>Active records</div>
+        </div>
+        <div class='kpi-container'>
+            <div class='kpi-title'>Median Rent</div>
+            <div class='kpi-value'>₹{int(median_rent):,}</div>
+            <div class='kpi-subtext'>Avg: ₹{int(avg_rent):,}</div>
+        </div>
+        <div class='kpi-container'>
+            <div class='kpi-title'>Median Rent / Sq.Ft</div>
+            <div class='kpi-value'>₹{median_sqft:.1f}/sqft</div>
+            <div class='kpi-subtext'>Carpet area basis</div>
+        </div>
+        <div class='kpi-container'>
+            <div class='kpi-title'>Average Size</div>
+            <div class='kpi-value'>{int(avg_size)} sqft</div>
+            <div class='kpi-subtext'>Floor space average</div>
+        </div>
+        <div class='kpi-container'>
+            <div class='kpi-title'>Median Deposit</div>
+            <div class='kpi-value'>₹{int(median_deposit):,}</div>
+            <div class='kpi-subtext'>~{deposit_ratio:.1f}x Rent</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
         
     st.markdown("<br>", unsafe_allow_html=True)
     
@@ -344,9 +480,9 @@ if page == "Overview":
         st.plotly_chart(fig_city, use_container_width=True)
 
 # ----------------- PRICE DRIVERS PAGE -----------------
-elif page == "Price Drivers":
+elif page == "📈 Price Drivers":
     if df_filtered.empty:
-        st.warning("No listings match your filters. Try adjusting budget sliders.")
+        st.warning("No listings match your filter selections. Try adjusting the budget or location filters in the Analysis Controls panel.")
         st.stop()
         
     # Premiums Calculation
@@ -460,8 +596,246 @@ elif page == "Price Drivers":
                 </div>
                 """, unsafe_allow_html=True)
 
+# ----------------- LOCATION INTELLIGENCE PAGE -----------------
+elif page == "🗺️ Location Intelligence":
+    # 1. Metric selector
+    m_cols = st.columns([3, 1])
+    with m_cols[0]:
+        metric_opts = {
+            'Median Rent': 'Median Rent (₹)',
+            'Rent per Sq.Ft.': 'Rent per Sq.Ft. (₹)',
+            'Value Score': 'Value Score',
+            'Average Size': 'Average Size (sqft)',
+            'Metro Proximity': 'Metro Proximity (km)'
+        }
+        selected_metric_label = st.radio(
+            "Visualize Metric:",
+            list(metric_opts.keys()),
+            horizontal=True
+        )
+        selected_metric = selected_metric_label # mapping key
+    
+    selected_profile = "Student"
+    with m_cols[1]:
+        if selected_metric == 'Value Score':
+            selected_profile = st.selectbox(
+                "Renter Profile:",
+                ["Student", "Working Professional", "Working Bachelor", "Family"]
+            )
+            
+    # Compute locality summarized statistics
+    LOCALITY_COORDS = {
+      "Mukherjee Nagar": { "x": 230, "y": 70, "zone": "North Delhi" },
+      "Model Town": { "x": 200, "y": 90, "zone": "North Delhi" },
+      "Kamla Nagar": { "x": 220, "y": 110, "zone": "North Delhi" },
+      "Civil Lines": { "x": 250, "y": 100, "zone": "North Delhi" },
+      "Rohini": { "x": 140, "y": 90, "zone": "North Delhi" },
+      "Karol Bagh": { "x": 210, "y": 150, "zone": "Central Delhi" },
+      "Patel Nagar": { "x": 180, "y": 155, "zone": "West Delhi" },
+      "Rajinder Nagar": { "x": 200, "y": 165, "zone": "Central Delhi" },
+      "Janakpuri": { "x": 120, "y": 180, "zone": "West Delhi" },
+      "Laxmi Nagar": { "x": 310, "y": 160, "zone": "East Delhi" },
+      "Shakarpur": { "x": 300, "y": 175, "zone": "East Delhi" },
+      "Preet Vihar": { "x": 330, "y": 165, "zone": "East Delhi" },
+      "Mayur Vihar": { "x": 320, "y": 210, "zone": "East Delhi" },
+      "Saket": { "x": 230, "y": 310, "zone": "South Delhi" },
+      "Malviya Nagar": { "x": 220, "y": 285, "zone": "South Delhi" },
+      "Hauz Khas": { "x": 210, "y": 260, "zone": "South Delhi" },
+      "Green Park": { "x": 195, "y": 250, "zone": "South Delhi" },
+      "Greater Kailash": { "x": 250, "y": 275, "zone": "South Delhi" },
+      "Vasant Kunj": { "x": 160, "y": 295, "zone": "South Delhi" },
+      "Dwarka": { "x": 90, "y": 220, "zone": "Dwarka" },
+      "Noida Sector 62": { "x": 410, "y": 190, "zone": "Noida" },
+      "Noida Sector 15": { "x": 350, "y": 225, "zone": "Noida" },
+      "Noida Sector 137": { "x": 430, "y": 270, "zone": "Noida" },
+      "Pari Chowk": { "x": 500, "y": 330, "zone": "Greater Noida" },
+      "Knowledge Park": { "x": 490, "y": 305, "zone": "Greater Noida" },
+      "Indirapuram": { "x": 390, "y": 155, "zone": "Ghaziabad" },
+      "Vaishali": { "x": 350, "y": 145, "zone": "Ghaziabad" },
+      "DLF Phase 3": { "x": 120, "y": 320, "zone": "Gurugram" },
+      "Gurugram Sector 45": { "x": 110, "y": 350, "zone": "Gurugram" },
+      "Gurugram Sector 56": { "x": 120, "y": 380, "zone": "Gurugram" },
+      "Golf Course Road": { "x": 140, "y": 360, "zone": "Gurugram" }
+    }
+    
+    stats = []
+    locality_groups = df_raw.groupby('locality')
+    for loc, group in locality_groups:
+        coords = LOCALITY_COORDS.get(loc)
+        if not coords:
+            continue
+        
+        # VFM Score mapping
+        vfm_col = ('vfm_student' if selected_profile == 'Student'
+                   else 'vfm_professional' if selected_profile == 'Working Professional'
+                   else 'vfm_bachelor' if selected_profile == 'Working Bachelor'
+                   else 'vfm_family')
+        
+        stats.append({
+            'Locality': loc,
+            'City': group['city'].iloc[0],
+            'Zone': coords['zone'],
+            'x': coords['x'],
+            'y': coords['y'],
+            'Listings': len(group),
+            'Median Rent (₹)': group['monthly_rent'].median(),
+            'Rent per Sq.Ft. (₹)': group['rent_per_sqft'].median(),
+            'Value Score': int(group[vfm_col].mean()),
+            'Average Size (sqft)': int(group['area_sqft'].mean()),
+            'Metro Proximity (km)': group['metro_distance_km'].median()
+        })
+        
+    df_map = pd.DataFrame(stats)
+    
+    # 2. Main layout grid: Map (70%) and Info Card (30%)
+    layout_cols = st.columns([5, 2])
+    
+    with layout_cols[0]:
+        st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569;'>Delhi/NCR Regional Coordinate Plot</h4>", unsafe_allow_html=True)
+        
+        # We plot coordinates. The sizes and colors are scaled based on selected metric.
+        metric_col_mapping = {
+            'Median Rent': 'Median Rent (₹)',
+            'Rent per Sq.Ft.': 'Rent per Sq.Ft. (₹)',
+            'Value Score': 'Value Score',
+            'Average Size': 'Average Size (sqft)',
+            'Metro Proximity': 'Metro Proximity (km)'
+        }
+        
+        target_col = metric_col_mapping[selected_metric]
+        
+        # Scale sizes: min size 8, max size 24
+        val_min = df_map[target_col].min()
+        val_max = df_map[target_col].max()
+        val_range = val_max - val_min if val_max != val_min else 1
+        
+        # Apply scaling logic
+        if selected_metric == 'Metro Proximity':
+            # For metro proximity, smaller distance = closer = higher proximity bubble size!
+            df_map['bubble_size'] = 8 + (1.0 - (df_map[target_col] - val_min)/val_range) * 16
+        else:
+            df_map['bubble_size'] = 8 + ((df_map[target_col] - val_min)/val_range) * 16
+            
+        # Select color scale:
+        if selected_metric == 'Value Score':
+            # green, amber, red scale
+            colorscale = ['#dc2626', '#d97706', '#16a34a']
+        else:
+            # neutral slate scale
+            colorscale = ['#cbd5e1', '#64748b', '#0f172a']
+            
+        fig_map = px.scatter(
+            df_map,
+            x='x',
+            y='y',
+            size='bubble_size',
+            color=target_col,
+            hover_name='Locality',
+            hover_data={
+                'x': False,
+                'y': False,
+                'bubble_size': False,
+                'City': True,
+                'Zone': True,
+                'Listings': True,
+                'Median Rent (₹)': ':,.0f',
+                'Rent per Sq.Ft. (₹)': ':,.1f',
+                'Value Score': True,
+                'Average Size (sqft)': ':,.0f',
+                'Metro Proximity (km)': ':.2f'
+            },
+            color_continuous_scale=colorscale,
+            size_max=24
+        )
+        
+        # Add Yamuna River coordinates line to Plotly
+        yamuna_x = [330, 330, 290, 340, 370, 400]
+        yamuna_y = [0, 100, 200, 300, 380, 420]
+        
+        fig_map.add_scatter(
+            x=yamuna_x,
+            y=yamuna_y,
+            mode='lines',
+            line=dict(color='#bae6fd', width=6, dash='dash'),
+            name='Yamuna River',
+            hoverinfo='skip',
+            showlegend=False
+        )
+        
+        # Add Yamuna text label
+        fig_map.add_annotation(
+            x=320,
+            y=230,
+            text="Yamuna River",
+            font=dict(color="#38bdf8", size=8, family="Manrope"),
+            showarrow=False,
+            textangle=-45
+        )
+        
+        # Invert Y to match SVG top-left origin coordinates
+        fig_map.update_yaxes(autorange="reversed", range=[430, -10], showticklabels=False, showgrid=False, zeroline=False)
+        fig_map.update_xaxes(range=[-10, 610], showticklabels=False, showgrid=False, zeroline=False)
+        
+        fig_map = style_plotly_fig(fig_map, height=380)
+        fig_map.update_layout(coloraxis_showscale=True, coloraxis_colorbar=dict(thickness=10, title="Scale"))
+        st.plotly_chart(fig_map, use_container_width=True)
+        
+    with layout_cols[1]:
+        st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569;'>Locality Details</h4>", unsafe_allow_html=True)
+        
+        selected_inspected_locality = st.selectbox(
+            "Select Locality to Inspect:",
+            df_map['Locality'].tolist()
+        )
+        
+        loc_row = df_map[df_map['Locality'] == selected_inspected_locality].iloc[0]
+        
+        st.markdown(f"""
+        <div style='background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.25rem; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.05); font-family: Manrope, sans-serif;'>
+            <span style='background-color: #eff6ff; color: #1e40af; font-size: 10px; font-weight: 700; padding: 0.25rem 0.5rem; border-radius: 4px; text-transform: uppercase;'>
+                {loc_row['Zone']}
+            </span>
+            <h3 style='margin: 0.5rem 0 0.2rem 0; font-size: 18px; font-weight: 700; color: #0f172a;'>
+                {loc_row['Locality']}
+            </h3>
+            <p style='margin: 0 0 1rem 0; font-size: 12px; color: #64748b;'>
+                {loc_row['City']}
+            </p>
+            <div style='display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; border-top: 1px solid #f1f5f9; padding-top: 1rem;'>
+                <div>
+                    <span style='font-size: 9px; font-weight: bold; color: #94a3b8; text-transform: uppercase; tracking-wider;'>Median Rent</span>
+                    <p style='font-weight: 700; font-size: 13px; color: #0f172a; margin: 0;'>₹{int(loc_row['Median Rent (₹)']):,}</p>
+                </div>
+                <div>
+                    <span style='font-size: 9px; font-weight: bold; color: #94a3b8; text-transform: uppercase; tracking-wider;'>Rent / Sq.Ft</span>
+                    <p style='font-weight: 700; font-size: 13px; color: #0f172a; margin: 0;'>₹{loc_row['Rent per Sq.Ft. (₹)']:.1f}</p>
+                </div>
+                <div>
+                    <span style='font-size: 9px; font-weight: bold; color: #94a3b8; text-transform: uppercase; tracking-wider;'>Value Score</span>
+                    <p style='font-weight: 700; font-size: 13px; color: #16a34a; margin: 0;'>{loc_row['Value Score']} / 100</p>
+                </div>
+                <div>
+                    <span style='font-size: 9px; font-weight: bold; color: #94a3b8; text-transform: uppercase; tracking-wider;'>Average Size</span>
+                    <p style='font-weight: 700; font-size: 13px; color: #0f172a; margin: 0;'>{loc_row['Average Size (sqft)']} sqft</p>
+                </div>
+                <div style='grid-column: span 2;'>
+                    <span style='font-size: 9px; font-weight: bold; color: #94a3b8; text-transform: uppercase; tracking-wider;'>Median Metro Distance</span>
+                    <p style='font-weight: 700; font-size: 13px; color: #0f172a; margin: 0;'>{loc_row['Metro Proximity (km)']:.2f} km</p>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569;'>Locality Metrics Matrix</h4>", unsafe_allow_html=True)
+    
+    # Render table sorted by metric
+    df_matrix_show = df_map[['Locality', 'City', 'Zone', 'Listings', 'Median Rent (₹)', 'Rent per Sq.Ft. (₹)', 'Value Score', 'Average Size (sqft)', 'Metro Proximity (km)']].copy()
+    df_matrix_show = df_matrix_show.sort_values(by=target_col, ascending=(selected_metric == 'Metro Proximity'))
+    st.dataframe(df_matrix_show, use_container_width=True, hide_index=True)
+
 # ----------------- RENTER SEGMENTS PAGE -----------------
-elif page == "Renter Segments":
+elif page == "👥 Renter Segments":
     st.markdown("<p style='font-size: 12px; color: #475569; margin-bottom: 1.5rem;'>Contrasting space requirements, budget parameters, and transit connectivity weights across renter demographics.</p>", unsafe_allow_html=True)
     
     # Construct weights dataframe for comparison
@@ -529,7 +903,7 @@ elif page == "Renter Segments":
         fig_radar = style_plotly_fig(fig_radar, height=280)
         st.plotly_chart(fig_radar, use_container_width=True)
 # ----------------- FIND YOUR RENTAL PAGE -----------------
-elif page == "Find Your Rental":
+elif page == "🔍 Find Your Rental":
     st.markdown("<h4 style='font-size: 13px; text-transform: uppercase; color: #475569; border-b: 1px solid #e2e8f0; padding-bottom: 0.5rem;'>Your Requirements</h4>", unsafe_allow_html=True)
     
     setup_cols = st.columns(4)
@@ -644,7 +1018,7 @@ elif page == "Find Your Rental":
                     st.write(f"**Total Estimated Housing Cost:** **₹{int(total):,}/month**")
 
 # ----------------- LOCALITY COMPARISON PAGE -----------------
-elif page == "Locality Comparison":
+elif page == "📊 Locality Comparison":
     st.markdown("<p style='font-size: 12px; color: #475569; margin-bottom: 1.5rem;'>Select up to three localities to compare rents, connectivity parameters, and Value Scores side-by-side.</p>", unsafe_allow_html=True)
     
     localities = sorted(list(df_raw['locality'].unique()))
@@ -699,7 +1073,7 @@ elif page == "Locality Comparison":
         st.plotly_chart(fig_comp, use_container_width=True)
 
 # ----------------- METHODOLOGY PAGE -----------------
-elif page == "Methodology":
+elif page == "ℹ️ Methodology":
     st.markdown("""
     <div style='background: white; border: 1px solid #e2e8f0; border-radius: 4px; padding: 1.5rem; space-y: 1.5rem;'>
         <h4 style='font-size: 13px; text-transform: uppercase; color: #0f172a; margin-top: 0;'>Prototype Dataset Notice</h4>
